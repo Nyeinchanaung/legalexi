@@ -118,8 +118,9 @@ The process of annotating the dataset ensures that the system can effectively le
 
 The experimental design evaluates the system's ability to process user inputs accurately, classify required clauses using the fine-tuned Legal-BERT model, extract entities, and generate coherent, complete, and legally compliant NDAs. The evaluation is structured in three phases—NLP model fine-tuning, clause classification and entity extraction assessment, and contract generation evaluation—followed by an iterative refinement step, as illustrated in Figure 1.
 
+
+![Experiment Design Diagram](ss.png)
 **Figure 1:** Experiment Design Diagram
-![Figure 1](ss.png)
 #### 3.2.1 Data Collection Preprocessing
 
 The first step in building the system involves curating a comprehensive dataset of legal contract templates, clauses, and synthetic user inputs:
@@ -179,6 +180,8 @@ The web application, designed using a web application framework such as Django o
 
 The generated NDAs will be designed to include at least 90% of the essential components typically found in an NDA, with a maximum error rate of 10% for missing or misplaced clauses. This ensures that the drafts produced by the system are functional, legally sound, and ready for user review. For example, an input like "Alice needs an NDA with Bob starting on January 1, 2025, for sharing business plans" should result in a complete NDA displayed on the web app, with all key clauses and entities correctly populated, as illustrated in Figure 2.
 
+
+![Web interface mockup](ss1.jpg)
 **Figure 2:** Web interface mockup
 
 User experience is expected to be seamless, with the app facilitating NDA generation in under 5 minutes, complemented by minimal clarification prompts (e.g., "Please specify the effective date") to handle missing entities. This will ensure that the process is fast and user-friendly, making legal document generation more accessible for non-experts. Peer reviewers are anticipated to rate the generated NDAs at 4 out of 5 for clarity, completeness, and perceived legal reliability, which confirms the system's usability for users without legal training.
