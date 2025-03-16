@@ -65,7 +65,7 @@ The dataset will consist of three main elements:
 ### Experimental Design ###
 The experimental design evaluates the system’s ability to process user inputs accurately, classify required clauses using the fine-tuned Legal-BERT model, extract entities, and generate coherent, complete, and legally compliant NDAs. The evaluation is structured in three phases—NLP model fine-tuning, clause classification and entity extraction assessment, and contract generation evaluation—followed by an iterative refinement step.
 <br/>
-#### NLP Model Fine-Tuning for Clause Classification:####
+#### NLP Model Fine-Tuning for Clause Classification:
 - The Legal-BERT model (nlpaueb/legal-bert-base-uncased) will be loaded using the Hugging Face Transformers library.
 - The clause classification dataset (100 examples) will be formatted into input-output pairs, where inputs are user requests and outputs are clause type labels (e.g., "confidentiality").
 - The model will be fine-tuned on this dataset using a GPU (e.g., via Google Colab) with a training split of 80% and a validation split of 20%. Training parameters will include a learning rate of 2e-5, batch size of 8, and 3 epochs to balance performance and resource constraints.
