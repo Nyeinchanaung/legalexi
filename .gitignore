@@ -136,6 +136,11 @@ ENV/
 env.bak/
 venv.bak/
 
+# contract environments
+.conract_env/
+conract_env/
+conract_env
+
 # Spyder project settings
 .spyderproject
 .spyproject

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Contract Generator</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .error { color: red; }
+    </style>
+</head>
+<body>
+    <h1>Contract Generator</h1>
+    
+    {% if not contract_type %}
+        <!-- Initial prompt input -->
+        <form method="POST" action="/">
+            <label for="prompt">Enter your contract request:</label><br>
+            <input type="text" id="prompt" name="prompt" placeholder="e.g., I need an NDA between Acme Corp and Jane Doe" required><br><br>
+            <input type="submit" value="Generate">
+        </form>
+    {% else %}
+        <!-- Missing fields form -->
+        <h2>Missing Information for {{ contract_type }}</h2>
+        <form method="POST" action="/submit_missing">
+            <input type="hidden" name="contract_type" value="{{ contract_type }}">
+            <input type="hidden" name="original_data" value="{{ original_data_json }}">
+            {% for field in missing %}
+                <label>Please provide the {{ field.replace('_', ' ') }}:</label><br>
+                <input type="text" name="{{ field }}" required><br><br>
+            {% endfor %}
+            <input type="submit" value="Submit">
+        </form>
+        <p><a href="/">Back to start</a></p>
+    {% endif %}
+</body>
+</html>
