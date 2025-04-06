@@ -7,25 +7,19 @@
         body { font-family: Arial, sans-serif; margin: 20px; }
         .error { color: red; }
         label { display: inline-block; width: 200px; }
-        .reply { color: blue; font-style: italic; }
     </style>
 </head>
 <body>
     <h1>Contract Generator</h1>
     
     {% if not contract_type %}
-        <!-- Initial prompt input -->
         <form method="POST" action="/">
             <label for="prompt">Enter your contract request:</label><br>
             <textarea type="text" id="prompt" name="prompt" placeholder="e.g., I need an NDA between Acme Corp and Jane Doe" required></textarea><br><br>
             <input type="submit" value="Generate">
         </form>
     {% elif step == "validate" %}
-        <!-- Validation step with reply -->
         <h2>Validate Extracted Data for {{ contract_type }}</h2>
-        {% if reply %}
-            <p class="reply">{{ reply }}</p>
-        {% endif %}
         <form method="POST" action="/validate">
             <input type="hidden" name="contract_type" value="{{ contract_type }}">
             <input type="hidden" name="original_data" value="{{ original_data_json }}">
@@ -37,11 +31,7 @@
         </form>
         <p><a href="/">Back to start</a></p>
     {% elif step == "missing" %}
-        <!-- Missing fields form with reply -->
         <h2>Missing Information for {{ contract_type }}</h2>
-        {% if reply %}
-            <p class="reply">{{ reply }}</p>
-        {% endif %}
         <form method="POST" action="/submit_missing">
             <input type="hidden" name="contract_type" value="{{ contract_type }}">
             <input type="hidden" name="original_data" value="{{ original_data_json }}">
@@ -55,3 +45,5 @@
     {% endif %}
 </body>
 </html>
+<!-- i need contract between companyA and compnayB-->
+<!-- I need an employee contract between John and The Company Z, starting from 2nd Jun and it is for 6 months. -->

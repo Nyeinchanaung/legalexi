@@ -34,15 +34,34 @@ def classify_contract_type(prompt):
 
 def extract_entities(prompt):
     doc = nlp(prompt)
-    entities = {"parties": [], "dates": [], "duration": None}
+    entities = {"parties": [], "dates": [], "duration": None, "description": None}
+    
+    # Contract type keywords to exclude from entities
+    contract_keywords = ["nda", "non-disclosure", "employment", "job", "service", "work", "agreement"]
+    
+    # Extract parties (ORG or PERSON, excluding contract keywords)
     for ent in doc.ents:
-        if ent.label_ in ["ORG", "PERSON"]:
+        text = ent.text.lower()
+        if ent.label_ in ["ORG", "PERSON"] and not any(kw in text for kw in contract_keywords):
             entities["parties"].append(ent.text)
-        elif ent.label_ == "DATE":
+    
+    # Extract dates
+    for ent in doc.ents:
+        if ent.label_ == "DATE":
             entities["dates"].append(ent.text)
+    
+    # Extract duration (e.g., "2-year")
     for token in doc:
         if token.text.endswith("-year"):
             entities["duration"] = token.text
+    
+    # Extract service description (heuristic: noun phrase after "for" or "to")
+    for token in doc:
+        if token.lower_ in ["for", "to"] and token.head.pos_ == "NOUN":
+            description = " ".join(t.text for t in token.head.subtree if t.pos_ in ["NOUN", "ADJ", "VERB"])
+            if not any(kw in description.lower() for kw in contract_keywords):
+                entities["description"] = description
+    
     return entities
 
 required_fields = {
@@ -60,7 +79,7 @@ def map_entities_to_fields(contract_type, entities):
             data["disclosing_party"] = parties[0]
             data["receiving_party"] = parties[1] if len(parties) > 1 else None
         dates = entities.get("dates", [])
-        data["effective_date"] = dates[0] if dates else None  # Safe access with default None
+        data["effective_date"] = dates[0] if dates else None
         data["confidentiality_period"] = entities.get("duration")
     elif contract_type == "Employment Agreement":
         parties = entities.get("parties", [])
@@ -76,6 +95,8 @@ def map_entities_to_fields(contract_type, entities):
             data["provider_name"] = parties[1] if len(parties) > 1 else None
         dates = entities.get("dates", [])
         data["start_date"] = dates[0] if dates else None
+        data["end_date"] = dates[1] if len(dates) > 1 else None
+        data["service_description"] = entities.get("description")
     for field in required_fields[contract_type]:
         if not data.get(field):
             missing.append(field)
