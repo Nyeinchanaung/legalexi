@@ -4,35 +4,26 @@
 - Patsachon Pattakulpong (st124952)
 - Nyein Chan Aung (st125553)
 
-### Overview
-- This research introduces a system for automating Non-Disclosure Agreement (NDA) generation. It integrates spaCy (Named Entity Recognition) and Legal-BERT for extracting key legal clauses and user intent, enhanced by a Qwen-7B model fine-tuned with LoRA on the ContractNLI dataset. The clauses are dynamically populated into NDA templates using Jinja2. Evaluation using BERTScore yielded high precision (81.47%), recall (78.69%), and F1 score (80.05%). The system demonstrates improved drafting efficiency, accessibility, and clause alignment.
+## Automated NDA Generator
 
-### Key Highlights
-#### Our Objective
+This project presents an **automated legal document generation system**, specifically designed to create **Non-Disclosure Agreements (NDAs)** using cutting-edge **Natural Language Processing (NLP)** and deep learning techniques.
 
-Automate the creation of legally sound NDAs using NLP and machine learning techniques.
+The system integrates
+- **spaCy-based Named Entity Recognition (NER)** for extracting key legal entities,
+- **Legal-BERT** for legal intent detection, and
+- a **Qwen-7B model fine-tuned via LoRA** on the ContractNLI dataset for clause-level legal reasoning.
 
-#### Pipeline Design
+Generated clauses are dynamically populated into a Jinja2-based NDA template, producing **fully customized and legally compliant documents**.
 
-Extracts contract information and user intent using Legal-BERT and spaCy.
+### Key Contributions
 
-Fine-tuned Qwen-7B model performs clause-level legal reasoning.
+- A hybrid pipeline that combines **rule-based extraction** and **model-driven reasoning** for legal clause generation
+- Fine-tuning of **Qwen-7B** using **Low-Rank Adaptation (LoRA)** to improve clause-level classification performance
+- Full-stack **Flask web interface** to support real-time, end-to-end document generation and interaction
+- High semantic accuracy demonstrated with **BERTScore (F1: 80.05%)**, reflecting the quality and legal coherence of the generated contracts  
 
-Jinja2 templating engine assembles tailored NDAs dynamically.
+This project showcases how legal document automation can reduce time and cost, improve accessibility, and ensure clarity and compliance—all through the power of NLP.
 
-#### Evaluation Results
-
-Precision: 81.47%, Recall: 78.69%, F1 Score: 80.05%.
-
-Demonstrates semantic accuracy and robust legal alignment.
-
-#### Significance
-
-Reduces drafting time and costs.
-
-Enhances accessibility for individuals and businesses without legal expertise.
-
-Advances automation of legal workflows through AI integration.
 ## References
 
 - Wenyuan Gu, Jiale Han, Haowen Wang, Xiang Li, and Bo Cheng. 2025. *Explain-Analyze-Generate: A Sequential Multi-Agent Collaboration Method for Complex Reasoning.* Proceedings of the 31st International Conference on Computational Linguistics (COLING 2025).
