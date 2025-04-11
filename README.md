@@ -50,6 +50,10 @@ This combination of Jinja2 template rendering, transformer-based legal clause mo
 ## Achievements So Far
 
 #### 1. System Architecture Designed
+![experiment-design-carbo (2)](https://github.com/user-attachments/assets/489426ac-f320-4fd2-bc83-8543db529530)
+
+
+
 
 A modular NLP pipeline has been created, integrating the following components:
 - **spaCy** for Named Entity Recognition (NER)
