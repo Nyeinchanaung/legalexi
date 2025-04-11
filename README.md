@@ -45,6 +45,70 @@ The evolution of open-source LLMs such as **LLaMA** (Touvron et al., 2023), **Al
 This combination of Jinja2 template rendering, transformer-based legal clause modeling, and instruction-tuned large language models forms the foundation of our end-to-end automated legal document generation system.
 
 
+## Project Progress Summary
+
+**Project Title**: Automated Legal Document Generation Using NLP and LLMs  
+**Objective**: To develop an end-to-end system that generates customized, legally valid Non-Disclosure Agreements (NDAs) from natural language inputs.
+
+---
+
+# Achievements So Far
+
+#### 1. System Architecture Designed
+
+A modular NLP pipeline has been created, integrating the following components:
+- **spaCy** for Named Entity Recognition (NER)
+- **Legal-BERT** for contract intent classification
+- **Qwen-7B** (fine-tuned via LoRA) for clause-level generation
+- **Jinja2** for dynamic NDA templating
+- **Flask** for a web-based user interface
+
+#### 2. NER and Clause Detection Implemented
+
+- Custom rules developed in spaCy to identify legal entities such as party names and durations
+- Legal-BERT tested on identifying contract types and classifying clause intents
+
+#### 3. Model Fine-Tuning Completed
+
+- Qwen-7B fine-tuned on the **ContractNLI** dataset using **LoRA** for efficient domain adaptation
+- GPT-2 model fine-tuned as a baseline for performance comparison
+
+#### 4. Evaluation Conducted
+
+- Evaluated using **BERTScore** for semantic alignment between generated and reference clauses
+- **Qwen-7B** achieved an F1 score of **80.05%**, outperforming GPT-2’s **75.58%**
+
+#### 5. Template-Based NDA Generation Operational
+
+- Jinja2 templates developed for Non-Disclosure Agreements
+- Generated clauses and user inputs dynamically integrated into the legal templates
+
+#### 6. Web Interface Prototyped
+
+- Flask backend developed to handle:
+  - User prompt submission
+  - Contract generation
+  - Document download
+- Basic user interface functional; UX improvements planned
+
+---
+
+### Experiment Highlights
+
+- **Dataset**: Subset of ContractNLI containing 607 annotated NDA clauses
+- **Evaluation Metrics**: Evaluation loss, BERTScore (Precision, Recall, F1)
+- **Best Performing Model**: Qwen-7B with LoRA (F1 score: **0.8060**)
+
+---
+
+### Next Steps
+
+- Integrate the NER and clause generation modules into a seamless, end-to-end pipeline
+- Enhance the web interface with form validation and improved user experience
+- Extend the system to support additional contract types such as employment and service agreements
+- Implement user feedback mechanisms to support continuous system refinement
+- Add document export options (PDF, DOCX) and version tracking for generated contracts
+
 # References
 
 - Wenyuan Gu, Jiale Han, Haowen Wang, Xiang Li, and Bo Cheng. 2025. *Explain-Analyze-Generate: A Sequential Multi-Agent Collaboration Method for Complex Reasoning.* Proceedings of the 31st International Conference on Computational Linguistics (COLING 2025).
