@@ -1,4 +1,4 @@
-# Automated Legal Document Generation Templates, Distilling legal complexity into clear, actionable insights.
+# Automated NDA Legal Document Generation.
 #### Submitted by: Group 8
 - Sonakul Kamnuanchai (st124738)
 - Patsachon Pattakulpong (st124952)
