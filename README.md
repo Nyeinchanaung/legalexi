@@ -21,6 +21,7 @@ Generated clauses are dynamically populated into a Jinja2-based NDA template, pr
 - High semantic accuracy demonstrated with **BERTScore (F1: 80.05%)**, reflecting the quality and legal coherence of the generated contracts  
 
 This project showcases how legal document automation can reduce time and cost, improve accessibility, and ensure clarity and compliance—all through the power of NLP.
+---
 # Related Works
 
 This project integrates insights from recent advancements in template-based document generation, transformer models for legal clause analysis, evaluation techniques for generated text, and domain-specific large language models (LLMs).
