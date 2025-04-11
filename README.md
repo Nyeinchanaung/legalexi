@@ -42,8 +42,6 @@ Evaluation of legal text generation requires metrics that account for contextual
 
 The evolution of open-source LLMs such as **LLaMA** (Touvron et al., 2023), **Alpaca** (Taori et al., 2023), **Baichuan** (Yang et al., 2023), and **Qwen-VL** (Bai et al., 2023) has democratized access to high-performing models for diverse NLP tasks. Recent trends have focused on domain-specific fine-tuning. For instance, **PIXIU** (Xie et al., 2023) specializes in financial NLP, while **HuaTuo** (Wang et al., 2023) targets medical applications. In line with this trend, Huang et al. (2025) developed **AuditWen**, a Qwen-7B-based model fine-tuned for audit-specific tasks. Inspired by these models, our project fine-tunes Qwen-7B using **LoRA** on the **ContractNLI** dataset to generate legal clauses tailored for NDA contracts.
 
----
-
 This combination of Jinja2 template rendering, transformer-based legal clause modeling, and instruction-tuned large language models forms the foundation of our end-to-end automated legal document generation system.
 
 
