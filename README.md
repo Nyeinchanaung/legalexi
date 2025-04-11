@@ -1,5 +1,4 @@
-# legalexi
-## Automated Legal Document Generation:
+## Automated Legal Document Generation Templates:
 ### Distilling legal complexity into clear, actionable insights.
 #### Submitted by: Group 8
 - Sonakul Kamnuanchai (st124738)
