@@ -4,15 +4,13 @@
 - Patsachon Pattakulpong (st124952)
 - Nyein Chan Aung (st125553)
 
-## Automated NDA Generator
-
+## Overview
 This project presents an **automated legal document generation system**, specifically designed to create **Non-Disclosure Agreements (NDAs)** using cutting-edge **Natural Language Processing (NLP)** and deep learning techniques.
 
 The system integrates
 - **spaCy-based Named Entity Recognition (NER)** for extracting key legal entities,
 - **Legal-BERT** for legal intent detection, and
 - a **Qwen-7B model fine-tuned via LoRA** on the ContractNLI dataset for clause-level legal reasoning.
-
 Generated clauses are dynamically populated into a Jinja2-based NDA template, producing **fully customized and legally compliant documents**.
 
 ### Key Contributions
