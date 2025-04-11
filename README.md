@@ -1,4 +1,4 @@
-# Automated NDA Legal Document Generation.
+# Automated NDA Legal Document.
 #### Submitted by: Group 8
 - Sonakul Kamnuanchai (st124738)
 - Patsachon Pattakulpong (st124952)
