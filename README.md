@@ -52,9 +52,6 @@ This combination of Jinja2 template rendering, transformer-based legal clause mo
 #### 1. System Architecture Designed
 ![experiment-design-carbo (2)](https://github.com/user-attachments/assets/489426ac-f320-4fd2-bc83-8543db529530)
 
-
-
-
 A modular NLP pipeline has been created, integrating the following components:
 - **spaCy** for Named Entity Recognition (NER)
 - **Legal-BERT** for contract intent classification
@@ -99,6 +96,21 @@ A modular NLP pipeline has been created, integrating the following components:
 - **Best Performing Model**: Qwen-7B with LoRA (F1 score: **0.8060**)
 
 ---
+### Preliminary results
+We evaluated the performance of GPT-2 and Qwen (LoRA) models on legal clause generation using the ContractNLI dataset. Evaluation was performed using standard language modeling loss and BERTScore.
+
+#### Evaluation Metrics
+
+| Model         | Eval Loss | BERTScore (P) | BERTScore (R) | BERTScore (F1) |
+|---------------|-----------|----------------|----------------|----------------|
+| **GPT-2**      | 1.958     | 0.7456         | 0.7663         | 0.7558         |
+| **Qwen (LoRA)**| **1.507** | **0.8175**     | **0.7948**     | **0.8060**     |
+
+#### Analysis
+- **Qwen (LoRA)** achieves lower loss and higher semantic similarity across all metrics.
+- Improvements in precision and recall indicate better clause alignment with legal phrasing.
+- GPT-2 struggles with legal syntax and coverage due to lack of domain-specific tuning.
+
 ## Limitations
 
 The current implementation of the automated NDA generation system, while functional, has a few limitations based on the progress achieved so far:
