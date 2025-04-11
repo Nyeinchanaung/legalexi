@@ -45,14 +45,9 @@ The evolution of open-source LLMs such as **LLaMA** (Touvron et al., 2023), **Al
 This combination of Jinja2 template rendering, transformer-based legal clause modeling, and instruction-tuned large language models forms the foundation of our end-to-end automated legal document generation system.
 
 
-## Project Progress Summary
+# Project Progress Summary
 
-**Project Title**: Automated Legal Document Generation Using NLP and LLMs  
-**Objective**: To develop an end-to-end system that generates customized, legally valid Non-Disclosure Agreements (NDAs) from natural language inputs.
-
----
-
-# Achievements So Far
+## Achievements So Far
 
 #### 1. System Architecture Designed
 
