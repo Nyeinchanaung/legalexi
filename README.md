@@ -46,7 +46,7 @@ The evolution of open-source LLMs such as **LLaMA** (Touvron et al., 2023), **Al
 This combination of Jinja2 template rendering, transformer-based legal clause modeling, and instruction-tuned large language models forms the foundation of our end-to-end automated legal document generation system.
 
 
-## References
+# References
 
 - Wenyuan Gu, Jiale Han, Haowen Wang, Xiang Li, and Bo Cheng. 2025. *Explain-Analyze-Generate: A Sequential Multi-Agent Collaboration Method for Complex Reasoning.* Proceedings of the 31st International Conference on Computational Linguistics (COLING 2025).
 - Sagar Joshi, Sumanth Balaji, Aparna Garimella, and Vasudeva Varma. 2022. *Graph-based Keyword Planning for Legal Clause Generation from Topics.* Proceedings of the Natural Legal Language Processing Workshop 2022.
