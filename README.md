@@ -95,6 +95,18 @@ A modular NLP pipeline has been created, integrating the following components:
 - **Best Performing Model**: Qwen-7B with LoRA (F1 score: **0.8060**)
 
 ---
+## Limitations
+
+The current implementation of the automated NDA generation system, while functional, has a few limitations based on the progress achieved so far:
+
+1. **Single Contract Type Support**  
+   The system currently supports only Non-Disclosure Agreements (NDAs). Other contract types such as employment or service agreements are not yet integrated.
+
+2. **Partial Pipeline Integration**  
+   The NER module (spaCy + Legal-BERT) and the clause generation module (Qwen-7B) have been implemented, but they are not yet fully integrated into a seamless end-to-end pipeline.
+
+3. **Limited Dataset Scope**  
+   Model training and evaluation have been conducted on a subset of the ContractNLI dataset. Broader clause coverage and more diverse legal contexts are not yet represented.
 
 ### Next Steps
 
