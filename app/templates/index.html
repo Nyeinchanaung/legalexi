@@ -2,56 +2,403 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Contract Generator</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Contract Generator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
     <style>
-        body { font-family: Arial, sans-serif; margin: 20px; }
-        .error { color: red; }
-        label { display: inline-block; width: 200px; }
-        .reply { color: blue; font-style: italic; }
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #e74c3c;
+            --light-color: #ecf0f1;
+            --dark-color: #2c3e50;
+            --success-color: #27ae60;
+            --warning-color: #f39c12;
+        }
+        
+        body {
+            font-family: 'Roboto', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f9f9f9;
+        }
+        
+        h1, h2 {
+            font-family: 'Playfair Display', serif;
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            text-align: center;
+            margin-top: 0;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--secondary-color);
+        }
+        
+        h2 {
+            font-size: 1.8rem;
+            margin-top: 2rem;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        form {
+            margin-top: 1.5rem;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--dark-color);
+        }
+        
+        input[type="text"],
+        input[type="email"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 1.5rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+            transition: border 0.3s;
+        }
+        
+        input[type="text"]:focus,
+        textarea:focus,
+        select:focus {
+            border-color: var(--secondary-color);
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+        }
+        
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+        
+        input[type="submit"],
+        input[type="button"],
+        button {
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        input[type="submit"]:hover,
+        input[type="button"]:hover,
+        button:hover {
+            background-color: #2980b9;
+        }
+        
+        .btn-secondary {
+            background-color: var(--light-color);
+            color: var(--dark-color);
+        }
+        
+        .btn-secondary:hover {
+            background-color: #d5dbdb;
+        }
+        
+        .error {
+            color: var(--accent-color);
+            background-color: #fdecea;
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 1rem;
+            border-left: 4px solid var(--accent-color);
+        }
+        
+        .reply {
+            color: var(--success-color);
+            background-color: #e8f5e9;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 1.5rem;
+            border-left: 4px solid var(--success-color);
+            font-style: italic;
+        }
+        
+        .progress-steps {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+            counter-reset: step;
+        }
+        
+        .progress-step {
+            flex: 1;
+            text-align: center;
+            position: relative;
+        }
+        
+        .progress-step:before {
+            counter-increment: step;
+            content: counter(step);
+            width: 30px;
+            height: 30px;
+            line-height: 30px;
+            display: block;
+            margin: 0 auto 10px;
+            border-radius: 50%;
+            background-color: #ddd;
+            color: #666;
+            font-weight: bold;
+        }
+        
+        .progress-step.active:before {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+        
+        .progress-step.complete:before {
+            background-color: var(--success-color);
+            color: white;
+        }
+        
+        .progress-step:after {
+            content: '';
+            position: absolute;
+            top: 15px;
+            left: 50%;
+            right: -50%;
+            height: 2px;
+            background-color: #ddd;
+            z-index: -1;
+        }
+        
+        .progress-step:last-child:after {
+            display: none;
+        }
+        
+        .radio-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .radio-option {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+        
+        .radio-option input {
+            width: auto;
+            margin-right: 10px;
+            margin-bottom: 0;
+        }
+        
+        .back-link {
+            display: inline-block;
+            margin-top: 1.5rem;
+            color: var(--secondary-color);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .back-link:hover {
+            text-decoration: underline;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 3rem;
+            padding-top: 1rem;
+            border-top: 1px solid #ddd;
+            color: #777;
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 768px) {
+            body {
+                padding: 15px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .container {
+                padding: 1.5rem;
+            }
+        }
     </style>
 </head>
 <body>
-    <h1>Contract Generator</h1>
+    <div class="container">
+        <h1>Legalexi: Contract Generator</h1>
+        <h3>This project presents an automated legal document generation system, specifically designed to create legal contracts.</h3>
+        
+        {% if not contract_type %}
+            <!-- Progress Steps -->
+            <div class="progress-steps">
+                <div class="progress-step active">Start</div>
+                <div class="progress-step">Details</div>
+                <div class="progress-step">Review</div>
+                <div class="progress-step">Generate</div>
+            </div>
+            
+            <!-- Initial prompt input -->
+            <form method="POST" action="/">
+                <p>Describe the contract you need in plain English. Our AI will extract the key details and generate a professional document.</p>
+                
+                <label for="prompt">Your contract request:</label>
+                <textarea id="prompt" name="prompt" placeholder="e.g., I need an NDA between Acme Corp and Beta Inc for a software development project" required></textarea>
+                
+                <div style="text-align: center; margin-top: 1.5rem;">
+                    <input type="submit" value="Start Contract Generation">
+                </div>
+            </form>
+            
+        {% elif step == "validate" %}
+            <!-- Progress Steps -->
+            <div class="progress-steps">
+                <div class="progress-step complete">Start</div>
+                <div class="progress-step active">Details</div>
+                <div class="progress-step">Review</div>
+                <div class="progress-step">Generate</div>
+            </div>
+            
+            <!-- Validation step -->
+            <h2>Review Contract Details</h2>
+            {% if reply %}
+                <p class="reply">{{ reply }}</p>
+            {% endif %}
+            
+            <p>Please verify the information we've extracted for your <strong>{{ contract_type }}</strong>:</p>
+            
+            <form method="POST" action="/validate">
+                <input type="hidden" name="contract_type" value="{{ contract_type }}">
+                <input type="hidden" name="original_data" value="{{ original_data_json }}">
+                
+                {% for field, value in original_data.items() %}
+                    <label for="{{ field }}">{{ field.replace('_', ' ') | title }}:</label>
+                    <input type="text" id="{{ field }}" name="{{ field }}" value="{{ value | default('') }}">
+                {% endfor %}
+                
+                <div style="text-align: center; margin-top: 2rem;">
+                    <input type="submit" name="submit" value="Confirm and Proceed">
+                </div>
+            </form>
+            
+            <a href="/" class="back-link">← Start over</a>
+            
+        {% elif step == "missing" %}
+            <!-- Progress Steps -->
+            <div class="progress-steps">
+                <div class="progress-step complete">Start</div>
+                <div class="progress-step active">Details</div>
+                <div class="progress-step">Review</div>
+                <div class="progress-step">Generate</div>
+            </div>
+            
+            <!-- Missing fields form -->
+            <h2>Additional Information Needed</h2>
+            {% if reply %}
+                <p class="reply">{{ reply }}</p>
+            {% endif %}
+            
+            <p>We need a few more details to generate your <strong>{{ contract_type }}</strong>:</p>
+            
+            <form method="POST" action="/submit_missing">
+                <input type="hidden" name="contract_type" value="{{ contract_type }}">
+                <input type="hidden" name="original_data" value="{{ original_data_json }}">
+                
+                {% for field in missing %}
+                    <label for="{{ field }}">{{ field.replace('_', ' ') | title }}:</label>
+                    <input type="text" id="{{ field }}" name="{{ field }}" required>
+                {% endfor %}
+                
+                <div style="text-align: center; margin-top: 2rem;">
+                    <input type="submit" value="Submit Details">
+                </div>
+            </form>
+            
+            <a href="/" class="back-link">← Start over</a>
+            
+        {% elif step == "optional" %}
+            <!-- Progress Steps -->
+            <div class="progress-steps">
+                <div class="progress-step complete">Start</div>
+                <div class="progress-step complete">Details</div>
+                <div class="progress-step active">Review</div>
+                <div class="progress-step">Generate</div>
+            </div>
+            
+            <!-- Optional clauses selection -->
+            <h2>Customize Your {{ contract_type }}</h2>
+            
+            <form method="POST" action="/optional">
+                <input type="hidden" name="contract_type" value="{{ contract_type }}">
+                <input type="hidden" name="original_data" value="{{ original_data_json }}">
+                
+                <div class="radio-group">
+                    <label>Include a non-compete clause?</label>
+                    <div class="radio-option">
+                        <input type="radio" id="non_compete_yes" name="non_compete" value="yes">
+                        <label for="non_compete_yes" style="display: inline; width: auto;">Yes</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" id="non_compete_no" name="non_compete" value="no" checked>
+                        <label for="non_compete_no" style="display: inline; width: auto;">No</label>
+                    </div>
+                </div>
+                
+                <div id="non_compete_details_container" style="display: none;">
+                    <label for="non_compete_details">Non-compete details:</label>
+                    <input type="text" id="non_compete_details" name="non_compete_details" placeholder="e.g., 1 year, no competing products">
+                </div>
+                
+                <div style="text-align: center; margin-top: 2rem;">
+                    <input type="submit" name="submit" value="Generate Contract">
+                </div>
+            </form>
+            
+            <a href="/" class="back-link">← Start over</a>
+        {% endif %}
+    </div>
     
-    {% if not contract_type %}
-        <!-- Initial prompt input -->
-        <form method="POST" action="/">
-            <label for="prompt">Enter your contract request:</label><br>
-            <textarea type="text" id="prompt" name="prompt" placeholder="e.g., I need an NDA between Acme Corp and Jane Doe" required></textarea><br><br>
-            <input type="submit" value="Generate">
-        </form>
-    {% elif step == "validate" %}
-        <!-- Validation step with reply -->
-        <h2>Validate Extracted Data for {{ contract_type }}</h2>
-        {% if reply %}
-            <p class="reply">{{ reply }}</p>
-        {% endif %}
-        <form method="POST" action="/validate">
-            <input type="hidden" name="contract_type" value="{{ contract_type }}">
-            <input type="hidden" name="original_data" value="{{ original_data_json }}">
-            {% for field, value in original_data.items() %}
-                <label>{{ field.replace('_', ' ') }}:</label>
-                <input type="text" name="{{ field }}" value="{{ value|default('') }}"><br><br>
-            {% endfor %}
-            <input type="submit" name="submit" value="Confirm and Proceed">
-        </form>
-        <p><a href="/">Back to start</a></p>
-    {% elif step == "missing" %}
-        <!-- Missing fields form with reply -->
-        <h2>Missing Information for {{ contract_type }}</h2>
-        {% if reply %}
-            <p class="reply">{{ reply }}</p>
-        {% endif %}
-        <form method="POST" action="/submit_missing">
-            <input type="hidden" name="contract_type" value="{{ contract_type }}">
-            <input type="hidden" name="original_data" value="{{ original_data_json }}">
-            {% for field in missing %}
-                <label>Please provide the {{ field.replace('_', ' ') }}:</label><br>
-                <input type="text" name="{{ field }}" required><br><br>
-            {% endfor %}
-            <input type="submit" value="Submit">
-        </form>
-        <p><a href="/">Back to start</a></p>
-    {% endif %}
+    <footer>
+        <p>AI Contract Generator | Not a substitute for legal advice</p>
+    </footer>
+
+    <script>
+        // Show/hide non-compete details based on radio selection
+        document.querySelectorAll('input[name="non_compete"]').forEach(radio => {
+            radio.addEventListener('change', function() {
+                const detailsContainer = document.getElementById('non_compete_details_container');
+                detailsContainer.style.display = this.value === 'yes' ? 'block' : 'none';
+            });
+        });
+        
+        // Initialize non-compete details visibility
+        document.addEventListener('DOMContentLoaded', function() {
+            const selectedRadio = document.querySelector('input[name="non_compete"]:checked');
+            if (selectedRadio) {
+                const detailsContainer = document.getElementById('non_compete_details_container');
+                detailsContainer.style.display = selectedRadio.value === 'yes' ? 'block' : 'none';
+            }
+        });
+    </script>
 </body>
 </html>
