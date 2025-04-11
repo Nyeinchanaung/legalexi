@@ -1,10 +1,10 @@
-# Automated Legal Document Generation Templates, Distilling legal complexity into clear, actionable insights.
+# Automated NDA Legal Document.
 #### Submitted by: Group 8
 - Sonakul Kamnuanchai (st124738)
 - Patsachon Pattakulpong (st124952)
 - Nyein Chan Aung (st125553)
 
-## Overview
+# Overview
 This project presents an **automated legal document generation system**, specifically designed to create **Non-Disclosure Agreements (NDAs)** using cutting-edge **Natural Language Processing (NLP)** and deep learning techniques.
 
 The system integrates:
@@ -21,31 +21,118 @@ Generated clauses are dynamically populated into a Jinja2-based NDA template, pr
 - High semantic accuracy demonstrated with **BERTScore (F1: 80.05%)**, reflecting the quality and legal coherence of the generated contracts  
 
 This project showcases how legal document automation can reduce time and cost, improve accessibility, and ensure clarity and compliance—all through the power of NLP.
-## Related Works
+---
+# Related Works
 
-This project builds upon a growing body of research in legal Natural Language Processing (NLP), template-based generation, and domain-specific large language models (LLMs).
+This project integrates insights from recent advancements in template-based document generation, transformer models for legal clause analysis, evaluation techniques for generated text, and domain-specific large language models (LLMs).
 
 ### 1. Template-Based Document Generation
 
-Jinja2 has been widely used for prompt engineering and document automation. Liu et al. (2022) introduced [PromptSource](https://aclanthology.org/2022.acl-demo.9/), a template-based framework that facilitates dynamic natural language prompt generation for language model fine-tuning. Our project adopts a similar template-driven approach to structure legal content in Non-Disclosure Agreements (NDAs).
+Template-driven systems have proven effective in automating structured document generation. A widely adopted tool in this domain is **Jinja2**, which enables dynamic text generation by replacing placeholders with input data. Its utility in NLP has been notably demonstrated in the **PromptSource** framework developed by Liu et al. (2022), where Jinja2 was used to dynamically generate natural language prompts for fine-tuning large language models. Inspired by this, our system applies a similar approach to automate legal contract creation, dynamically inserting legal clauses and user-specific entities into pre-built NDA templates.
 
-### 2. Transformer Models for Legal Text
+### 2. Transformer Models and Clause Analysis
 
-Legal-BERT has demonstrated strong performance in classifying legal clauses and understanding domain-specific context. Limsopatham (2021) highlighted its ability to effectively segment and interpret legal texts ([paper](https://aclanthology.org/2021.nllp-1.22/)). Additionally, Narendra et al. (2024) leveraged clause segmentation and natural language inference to improve legal contract comparison, showcasing the practical potential of large language models ([paper](https://aclanthology.org/2024.nllp-1.11/)).
+Transformer-based models, especially domain-adapted versions like **Legal-BERT**, have shown great potential in handling legal documents. Limsopatham (2021) demonstrated Legal-BERT’s ability to segment and interpret legal language effectively. Complementing this, Narendra et al. (2024) proposed methods to enhance contract understanding using clause segmentation and Natural Language Inference (NLI), improving contract comparison and clause-level classification. These approaches guide our own integration of Legal-BERT for intent detection and Qwen-7B for clause generation.
 
-### 3. Evaluation with BERTScore
+### 3. Evaluation Methods for Legal Document Generation
 
-BERTScore is a widely adopted metric for evaluating semantic similarity between generated and reference texts. Hanna and Bojar (2021) conducted a fine-grained analysis showing its strengths in capturing meaning while pointing out its weaknesses in legal subtleties like function word usage ([paper](https://aclanthology.org/2021.wmt-1.59/)). We use BERTScore in our system to validate clause generation quality.
+Evaluation of legal text generation requires metrics that account for contextual fidelity and legal phrasing. Cao et al. (2020) proposed integrating BERT with score-based features to detect grammatical and semantic errors in generated content. Meanwhile, BERTScore—studied extensively by Hanna and Bojar (2021)—has become a key metric for measuring semantic similarity between generated and reference clauses. Although effective at detecting major discrepancies, it is less sensitive to subtle legal phrasings, prompting the need for complementary qualitative review. We use BERTScore to measure the semantic consistency of our generated NDA clauses.
 
-### 4. Domain-Specific LLMs
+### 4. Open-Source Large Language Models
 
-Recent work on open-source LLMs fine-tuned for specific industries demonstrates the power of instruction tuning. Examples include PIXIU for finance ([Xie et al., 2023](https://arxiv.org/abs/2309.12345)), HuaTuo for medicine ([Wang et al., 2023](https://arxiv.org/abs/2304.06975)), and AuditWen for auditing ([Huang et al., 2025](https://aclanthology.org/2025.llmfinlegal-1.30/)). Our project follows this line by fine-tuning Qwen-7B on the ContractNLI dataset ([Koreeda & Manning, 2021](https://aclanthology.org/2021.findings-emnlp.164/)) to generate legally accurate NDA clauses.
+The evolution of open-source LLMs such as **LLaMA** (Touvron et al., 2023), **Alpaca** (Taori et al., 2023), **Baichuan** (Yang et al., 2023), and **Qwen-VL** (Bai et al., 2023) has democratized access to high-performing models for diverse NLP tasks. Recent trends have focused on domain-specific fine-tuning. For instance, **PIXIU** (Xie et al., 2023) specializes in financial NLP, while **HuaTuo** (Wang et al., 2023) targets medical applications. In line with this trend, Huang et al. (2025) developed **AuditWen**, a Qwen-7B-based model fine-tuned for audit-specific tasks. Inspired by these models, our project fine-tunes Qwen-7B using **LoRA** on the **ContractNLI** dataset to generate legal clauses tailored for NDA contracts.
+
+This combination of Jinja2 template rendering, transformer-based legal clause modeling, and instruction-tuned large language models forms the foundation of our end-to-end automated legal document generation system.
+
+
+# Project Progress Summary
+
+## Achievements So Far
+
+#### 1. System Architecture Designed
+![experiment-design-carbo (2)](https://github.com/user-attachments/assets/489426ac-f320-4fd2-bc83-8543db529530)
+
+A modular NLP pipeline has been created, integrating the following components:
+- **spaCy** for Named Entity Recognition (NER)
+- **Legal-BERT** for contract intent classification
+- **Qwen-7B** (fine-tuned via LoRA) for clause-level generation
+- **Jinja2** for dynamic NDA templating
+- **Flask** for a web-based user interface
+
+#### 2. NER and Clause Detection Implemented
+
+- Custom rules developed in spaCy to identify legal entities such as party names and durations
+- Legal-BERT tested on identifying contract types and classifying clause intents
+
+#### 3. Model Fine-Tuning Completed
+
+- Qwen-7B fine-tuned on the **ContractNLI** dataset using **LoRA** for efficient domain adaptation
+- GPT-2 model fine-tuned as a baseline for performance comparison
+
+#### 4. Evaluation Conducted
+
+- Evaluated using **BERTScore** for semantic alignment between generated and reference clauses
+- **Qwen-7B** achieved an F1 score of **80.05%**, outperforming GPT-2’s **75.58%**
+
+#### 5. Template-Based NDA Generation Operational
+
+- Jinja2 templates developed for Non-Disclosure Agreements
+- Generated clauses and user inputs dynamically integrated into the legal templates
+
+#### 6. Web Interface Prototyped
+
+- Flask backend developed to handle:
+  - User prompt submission
+  - Contract generation
+  - Document download
+- Basic user interface functional; UX improvements planned
 
 ---
 
-This combination of template rendering, legal clause modeling, and domain-adapted LLMs forms the backbone of our automated NDA generation system.
+### Experiment Highlights
 
-## References
+- **Dataset**: Subset of ContractNLI containing 607 annotated NDA clauses
+- **Evaluation Metrics**: Evaluation loss, BERTScore (Precision, Recall, F1)
+- **Best Performing Model**: Qwen-7B with LoRA (F1 score: **0.8060**)
+
+---
+### Preliminary results
+We evaluated the performance of GPT-2 and Qwen (LoRA) models on legal clause generation using the ContractNLI dataset. Evaluation was performed using standard language modeling loss and BERTScore.
+
+#### Evaluation Metrics
+
+| Model         | Eval Loss | BERTScore (P) | BERTScore (R) | BERTScore (F1) |
+|---------------|-----------|----------------|----------------|----------------|
+| **GPT-2**      | 1.958     | 0.7456         | 0.7663         | 0.7558         |
+| **Qwen (LoRA)**| **1.507** | **0.8175**     | **0.7948**     | **0.8060**     |
+
+#### Analysis
+- **Qwen (LoRA)** achieves lower loss and higher semantic similarity across all metrics.
+- Improvements in precision and recall indicate better clause alignment with legal phrasing.
+- GPT-2 struggles with legal syntax and coverage due to lack of domain-specific tuning.
+
+## Limitations
+
+The current implementation of the automated NDA generation system, while functional, has a few limitations based on the progress achieved so far:
+
+1. **Single Contract Type Support**  
+   The system currently supports only Non-Disclosure Agreements (NDAs). Other contract types such as employment or service agreements are not yet integrated.
+
+2. **Partial Pipeline Integration**  
+   The NER module (spaCy + Legal-BERT) and the clause generation module (Qwen-7B) have been implemented, but they are not yet fully integrated into a seamless end-to-end pipeline.
+
+3. **Limited Dataset Scope**  
+   Model training and evaluation have been conducted on a subset of the ContractNLI dataset. Broader clause coverage and more diverse legal contexts are not yet represented.
+
+### Next Steps
+
+- Integrate the NER and clause generation modules into a seamless, end-to-end pipeline
+- Enhance the web interface with form validation and improved user experience
+- Extend the system to support additional contract types such as employment and service agreements
+- Implement user feedback mechanisms to support continuous system refinement
+- Add document export options (PDF, DOCX) and version tracking for generated contracts
+
+# References
 
 - Wenyuan Gu, Jiale Han, Haowen Wang, Xiang Li, and Bo Cheng. 2025. *Explain-Analyze-Generate: A Sequential Multi-Agent Collaboration Method for Complex Reasoning.* Proceedings of the 31st International Conference on Computational Linguistics (COLING 2025).
 - Sagar Joshi, Sumanth Balaji, Aparna Garimella, and Vasudeva Varma. 2022. *Graph-based Keyword Planning for Legal Clause Generation from Topics.* Proceedings of the Natural Legal Language Processing Workshop 2022.
