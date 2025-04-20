@@ -1,27 +1,29 @@
 # helpers.py
 import spacy
-from transformers import AutoTokenizer, AutoModelForSequenceClassification
+from transformers import AutoTokenizer, AutoModelForSequenceClassification, pipeline, GPT2Tokenizer, GPT2LMHeadModel
 import torch
+
+
+nlp = spacy.load("en_core_web_sm")
 
 # Keyward Matching for Contract Types
 # This is a simple heuristic to classify contract types based on keywords.
 
-def classify_contract_type(prompt):
-    prompt = prompt.lower()
-    if "nda" in prompt or "non-disclosure" in prompt:
-        return "NDA"
-    elif "employment" in prompt or "job" in prompt:
-        return "Employment Agreement"
-    elif "service" in prompt or "work" in prompt:
-        return "Service Agreement"
-    return "NDA"
+# def classify_contract_type(prompt):
+#     prompt = prompt.lower()
+#     if "nda" in prompt or "non-disclosure" in prompt:
+#         return "NDA"
+#     elif "employment" in prompt or "job" in prompt:
+#         return "Employment Agreement"
+#     elif "service" in prompt or "work" in prompt:
+#         return "Service Agreement"
+#     return "NDA"
 
 # use of legal bert for contract classification
 
 
-nlp = spacy.load("en_core_web_sm")
-tokenizer = AutoTokenizer.from_pretrained("nlpaueb/legal-bert-base-uncased")
-model = AutoModelForSequenceClassification.from_pretrained("nlpaueb/legal-bert-base-uncased", num_labels=3)  # 3 contract types
+# tokenizer = AutoTokenizer.from_pretrained("nlpaueb/legal-bert-base-uncased")
+# model = AutoModelForSequenceClassification.from_pretrained("nlpaueb/legal-bert-base-uncased", num_labels=3)  # 3 contract types
 
 # def classify_contract_type(prompt):
 #     inputs = tokenizer(prompt, return_tensors="pt", truncation=True, padding=True)
@@ -31,6 +33,24 @@ model = AutoModelForSequenceClassification.from_pretrained("nlpaueb/legal-bert-b
 #     predicted_class = torch.argmax(logits, dim=1).item()
 #     contract_types = ["NDA", "Employment Agreement", "Service Agreement"]
 #     return contract_types[predicted_class]
+
+# Load model and tokenizer
+def load_model():
+    model_path = "../models/best_legal_bert_contract_classifier_unknow"
+    tokenizer = AutoTokenizer.from_pretrained(model_path)
+    classifier = pipeline(
+        "text-classification",
+        model=model_path,
+        tokenizer=tokenizer,
+        device=0 if torch.cuda.is_available() else -1
+    )
+    return classifier
+
+
+def classify_contract_type(prompt):
+    model = load_model()
+    return model(prompt)[0]['label']
+
 
 def extract_entities(prompt):
     doc = nlp(prompt)
@@ -65,15 +85,15 @@ def extract_entities(prompt):
     return entities
 
 required_fields = {
-    "NDA": ["disclosing_party", "receiving_party", "effective_date", "confidentiality_period"],
-    "Employment Agreement": ["employee_name", "employer_name", "start_date", "position", "salary"],
-    "Service Agreement": ["client_name", "provider_name", "start_date", "end_date", "service_description"]
+    "Non-Disclosure Agreement (NDA)": ["disclosing_party", "receiving_party", "effective_date", "confidentiality_period"],
+    "Employment Contract": ["employee_name", "employer_name", "start_date", "position", "salary"],
+    "Service Agreement": ["client_name", "provider_name", "start_date", "end_date", "service_description"],
 }
 
 def map_entities_to_fields(contract_type, entities):
     data = {}
     missing = []
-    if contract_type == "NDA":
+    if contract_type == "Non-Disclosure Agreement (NDA)":
         parties = entities.get("parties", [])
         if parties:
             data["disclosing_party"] = parties[0]
@@ -81,7 +101,7 @@ def map_entities_to_fields(contract_type, entities):
         dates = entities.get("dates", [])
         data["effective_date"] = dates[0] if dates else None
         data["confidentiality_period"] = entities.get("duration")
-    elif contract_type == "Employment Agreement":
+    elif contract_type == "Employment Contract":
         parties = entities.get("parties", [])
         if parties:
             data["employee_name"] = parties[0]
@@ -101,3 +121,25 @@ def map_entities_to_fields(contract_type, entities):
         if not data.get(field):
             missing.append(field)
     return data, missing
+
+# dynamic clauses generation
+# Load your legal BERT model for dynamic clause generation
+def generate_dynamic_clauses(contract_type, data):
+    # Load GPT-2 for clause generation
+    gpt2_tokenizer = GPT2Tokenizer.from_pretrained("gpt2")
+    gpt2_model = GPT2LMHeadModel.from_pretrained("gpt2")
+    clauses = {}
+    if contract_type == "Non-Disclosure Agreement (NDA)":
+        # Example using your legal gtp2 model
+        inputs = gpt2_tokenizer(
+            f"Generate confidentiality definition for {data['disclosing_party']} and {data['receiving_party']}",
+            return_tensors="pt"
+        )
+        outputs = gpt2_model.generate(inputs)
+        clauses['definition'] = gpt2_tokenizer.decode(outputs[0], skip_special_tokens=True)
+        
+    elif contract_type == "Employment Agreement":
+        # Similar logic for employment terms
+        pass
+        
+    return clauses
