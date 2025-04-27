@@ -122,6 +122,7 @@ We evaluated the performance of GPT-2 and Qwen (LoRA) models on legal clause gen
 | **BERTScore (P)**  | **0.8415**         | 0.7315            |
 | **BERTScore (R)**  | **0.8764**         | 0.7936            |
 | **BERTScore (F1)** | **0.8581**         | 0.7608            |
+
 **Table 1:** Evaluation results comparing Qwen and GPT-2 on legal clause generation.
 
 #### Analysis
