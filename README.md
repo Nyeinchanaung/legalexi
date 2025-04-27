@@ -117,7 +117,7 @@ A modular NLP pipeline has been created, integrating the following components:
 
 ---
 # Results
-We evaluated the performance of GPT-2 and Qwen (LoRA) models on legal clause generation using the ContractNLI dataset. Evaluation was performed using standard language modeling loss and BERTScore.
+We evaluated the performance of GPT-2 and Qwen (LoRA) models on legal clause generation using the Legal-Clause-Instructions dataset. Evaluation was performed using standard language modeling loss and BERTScore.
 
 #### Evaluation Metrics
 
