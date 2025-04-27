@@ -127,7 +127,7 @@ We evaluated the performance of GPT-2 and Qwen (LoRA) models on legal clause gen
 
 </div>
 
-<p align="center"> **Table 1:** Evaluation results comparing Qwen and GPT-2 on legal clause generation.</p>
+<p align="center"> Table 1: Evaluation results comparing Qwen and GPT-2 on legal clause generation.</p>
 
 #### Analysis
 - **Qwen1.5-0.5B-Chat** outperformed **GPT-2** across all metrics, achieving higher precision, recall, and F1 score.
