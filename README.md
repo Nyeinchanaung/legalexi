@@ -106,9 +106,14 @@ A modular NLP pipeline has been created, integrating the following components:
 
 ### Experiment Highlights
 
-- **Dataset**: Subset of ContractNLI containing 607 annotated NDA clauses
-- **Evaluation Metrics**: Evaluation loss, BERTScore (Precision, Recall, F1)
-- **Best Performing Model**: Qwen1.5-0.5B-Chat with LoRA (F1 score: **0.8060**)
+- **Dataset**:  
+  A curated subset of the ContractNLI dataset, consisting of 607 annotated Non-Disclosure Agreement (NDA) clauses, used for fine-tuning and evaluation.
+
+- **Evaluation Metrics**:  
+  Performance was assessed using evaluation loss and BERTScore metrics, including Precision, Recall, and F1 score, to measure semantic alignment and output quality.
+
+- **Best Performing Model**:  
+  The fine-tuned **Qwen1.5-0.5B-Chat** model with LoRA achieved the highest performance, reaching a **BERTScore (F1) of 0.8581**, outperforming the GPT-2 baseline (F1: 0.7608).
 
 ---
 # Results
