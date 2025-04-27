@@ -1,6 +1,6 @@
 # Automated NDA Legal Document.
 Project Link: https://github.com/Nyeinchanaung/legalexi
-#### Submitted by: Group 8
+#### Submitted by: Carbonara Group
 - Sonakul Kamnuanchai (st124738)
 - Patsachon Pattakulpong (st124952)
 - Nyein Chan Aung (st125553)
