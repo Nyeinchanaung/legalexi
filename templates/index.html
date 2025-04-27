@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Contract Generator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            max-width: 90%;
+            max-height: 80%;
+            overflow-y: auto;
+            padding: 2rem;
+            position: relative;
+            font-family: 'Roboto', sans-serif;
+            color: #333;
+        }
+        
+        .modal-close {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--primary-color);
+        }
+        
+        .modal-close:hover {
+            color: var(--secondary-color);
+        }
+        
+        .preview-button {
+            /* background-color: var(--secondary-color); */
+            /* color: white; */
+            padding: 8px 16px;
+            border-radius: 5px;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 10px;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+        
+        .preview-button:hover {
+            background-color: #2980b9;
+        }
+        
+        .template-fullpreview {
+            display: none; /* Hidden by default, only shown in modal */
+        }
+        
+        .template-option {
+            margin-bottom: 1.5rem;
+        }
+        
+        .template-preview {
+            cursor: pointer;
+            border: 1px solid #eee;
+            padding: 1rem;
+            border-radius: 5px;
+            transition: border-color 0.3s;
+        }
+        
+        .template-preview:hover {
+            border-color: var(--secondary-color);
+        }
+        /* General styles for alert message */
+        .error-message {
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            font-size: 1rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            color: #fff;
+        }
+
+        /* Warning Alert Styling */
+        .alert-warning {
+            background-color: #f39c12;  /* Orange color for warning */
+            border: 1px solid #e67e22;  /* Darker orange border */
+        }
+
+        .error-message .close-btn {
+            margin-left: auto;
+            background-color: transparent;
+            border: none;
+            font-size: 1.5rem;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        .error-message .close-btn:hover {
+            color: #f1c40f;
+        }
+
+        /* Optional: Add an icon to the alert */
+        .error-message::before {
+            content: '⚠️'; /* Warning icon */
+            margin-right: 10px;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Legalexi: Contract Generator</h1>
+        <h3>This project presents an automated legal document generation system, specifically designed to create legal contracts.</h3>
+        <!-- display error message -->
+         
+        {% if error %}
+            <div class="error-message alert-warning">
+                <span>{{ error }}</span>
+                <button class="close-btn" onclick="this.parentElement.style.display='none';">&times;</button>
+            </div>
+        {% endif %}
+
+        {% if not contract_type %}
+            <!-- Progress Steps -->
+            <div class="progress-steps">
+                <div class="progress-step active">Start</div>
+                <div class="progress-step">Details</div>
+                <div class="progress-step">Review</div>
+                <div class="progress-step">Generate</div>
+            </div>
+            
+            <!-- Initial prompt input -->
+            <form method="POST" action="/">
+                <p>Describe the contract you need in plain English. Our AI will extract the key details and generate a professional document.</p>
+                
+                <label for="prompt">Your contract request:</label>
+                <textarea id="prompt" name="prompt" placeholder="e.g., I need an NDA between Acme Corp and Beta Inc for a software development project" required></textarea>
+                
+                <div style="text-align: center; margin-top: 1.5rem;">
+                    <input type="submit" value="Start Contract Generation">
+                </div>
+            </form>
+            
+        {% elif step == "validate" %}
+            <!-- Progress Steps -->
+            <div class="progress-steps">
+                <div class="progress-step complete">Start</div>
+                <div class="progress-step active">Details</div>
+                <div class="progress-step">Review</div>
+                <div class="progress-step">Generate</div>
+            </div>
+            
+            <!-- Validation step -->
+            <h2>Review Contract Details</h2>
+            {% if reply %}
+                <p class="reply">{{ reply }}</p>
+            {% endif %}
+            
+            <p>Please verify the information we've extracted for your <strong>{{ contract_type }}</strong>:</p>
+           
+            <form method="POST" action="/validate">
+                <input type="hidden" name="contract_type" value="{{ contract_type }}">
+                <input type="textarea" name="original_data" value="{{ original_data_json }}">
+                <input type="hidden" name="contract_id" value="{{ contract_id }}">
+                
+                {% for field, value in original_data.items() %}
+                    <label for="{{ field }}">{{ field.replace('_', ' ') | title }}:</label>
+                    <input type="text" id="{{ field }}" name="{{ field }}" value="{{ value | default('') }}">
+                {% endfor %}
+                
+                <div style="text-align: center; margin-top: 2rem;">
+                    <input type="submit" name="submit" value="Confirm and Proceed">
+                </div>
+            </form>
+            
+            <a href="/" class="back-link">← Start over</a>
+            
+        {% elif step == "missing" %}
+            <!-- Progress Steps -->
+            <div class="progress-steps">
+                <div class="progress-step complete">Start</div>
+                <div class="progress-step active">Details</div>
+                <div class="progress-step">Review</div>
+                <div class="progress-step">Generate</div>
+            </div>
+            
+            <!-- Missing fields form -->
+            <h2>Additional Information Needed</h2>
+            {% if reply %}
+                <p class="reply">{{ reply }}</p>
+            {% endif %}
+            
+            <p>We need a few more details to generate your <strong>{{ contract_type }}</strong>:</p>
+            
+            <form method="POST" action="/submit_missing">
+                <input type="hidden" name="contract_type" value="{{ contract_type }}">
+                <input type="hidden" name="original_data" value="{{ original_data_json }}">
+                
+                {% for field in missing %}
+                    <label for="{{ field }}">{{ field.replace('_', ' ') | title }}:</label>
+                    <input type="text" id="{{ field }}" name="{{ field }}" required>
+                {% endfor %}
+                
+                <div style="text-align: center; margin-top: 2rem;">
+                    <input type="submit" value="Submit Details">
+                </div>
+            </form>
+            
+            <a href="/" class="back-link">← Start over</a>
+            
+        {% elif step == "template_selection" %}
+            <!-- Progress Steps -->
+            <div class="progress-steps">
+                <div class="progress-step complete">Start</div>
+                <div class="progress-step complete">Details</div>
+                <div class="progress-step active">Template</div>
+                <div class="progress-step">Generate</div>
+            </div>
+            
+            <h2>Select Your {{ contract_type }} Template</h2>
+            <p class="subtitle">Choose from our pre-designed templates or get an AI-generated custom contract</p>
+            
+            <form method="POST" action="/generate">
+                <input type="hidden" name="contract_type" value="{{ contract_type }}">
+                <input type="hidden" name="contract_id" value="{{ contract_id }}">
+                <input type="text" name="original_data" value="{{ original_data_json }}">
+                
+                <div class="template-gallery">
+                    <!-- Template Option 1 -->
+                    <div class="template-option">
+                        <input type="radio" id="template_1" name="template_choice" value="1" checked>
+                        <label for="template_1">
+                            <div class="template-preview">
+                                <div class="template-preview-content">
+                                    <h4>Standard Legal</h4>
+                                    <p>Traditional legal wording with fixed clauses</p>
+                                    
+                                </div>
+                                <div class="template-badge preview-button" onclick="openModal('template-1-preview')">Preview</div>
+                            </div>
+                            <div class="template-description">
+                                <!-- <span class="preview-button" onclick="openModal('template-1-preview')">View Preview</span> -->
+                                <h3>Standard Version</h3>
+                                <p>Ideal for general business use</p>
+                            </div>
+                        </label>
+                        <div class="template-fullpreview" id="template-1-preview">
+                            {% include contract_id.lower() + '_template_1.html' with context %}
+                        </div>
+                    </div>
+                    
+                    <!-- Template Option 2 -->
+                    <div class="template-option">
+                        <input type="radio" id="template_2" name="template_choice" value="2">
+                        <label for="template_2">
+                            <div class="template-preview">
+                                <div class="template-preview-content">
+                                    <h4>Modern Language</h4>
+                                    <p>Plain English with contemporary terms</p>
+                                    <!-- <span class="preview-button" onclick="openModal('template-2-post-preview')">View Preview</span> -->
+                                </div>
+                                <div class="template-badge preview-button" onclick="openModal('template-2-post-preview')">Preview</div>
+                            </div>
+                            <div class="template-description">
+                                <h3>Modern Version</h3>
+                                <p>Clear and easy to understand</p>
+                            </div>
+                        </label>
+                        <div class="template-fullpreview" id="template-2-post-preview">
+                            {% include contract_id.lower() + '_template_2.html' with context %}
+                        </div>
+                    </div>
+                    
+                    <!-- Template Option 3 -->
+                    <div class="template-option">
+                        <input type="radio" id="template_3" name="template_choice" value="3">
+                        <label for="template_3">
+                            <div class="template-preview">
+                                <div class="template-preview-content">
+                                    <h4>Comprehensive</h4>
+                                    <p>Detailed with extensive protections</p>
+                                    <!-- <span class="preview-button" onclick="openModal('template-3-preview')">View Preview</span> -->
+                                </div>
+                                <div class="template-badge preview-button" onclick="openModal('template-3-preview')">Preview</div>
+                            </div>
+                            <div class="template-description">
+                                <h3>Strict Version</h3>
+                                <p>Maximum legal protection</p>
+                            </div>
+                        </label>
+                        <div class="template-fullpreview" id="template-3-preview">
+                            {% include contract_id.lower() + '_template_3.html' with context %}
+                        </div>
+                    </div>
+                    
+                    <!-- AI Dynamic Option -->
+                    <div class="template-option template-ai">
+                        <input type="radio" id="template_dynamic" name="template_choice" value="dynamic">
+                        <label for="template_dynamic">
+                            <div class="template-preview">
+                                <div class="template-preview-content">
+                                    <h4>AI Custom</h4>
+                                    <p>Generated for your specific needs</p>
+                                    <span class="preview-button" onclick="openModal('dynamic-preview')">View Preview</span>
+                                </div>
+                                <div class="template-badge">AI Smart</div>
+                                <div class="ai-badge">NEW</div>
+                            </div>
+                            <div class="template-description">
+                                <h3>Custom AI Version</h3>
+                                <p>Tailored to your exact requirements</p>
+                            </div>
+                        </label>
+                        <div class="template-fullpreview" id="dynamic-preview">
+                            <h4>AI-Generated Contract Features</h4>
+                            <div class="preview-content">
+                                <ul>
+                                    <li>Custom clauses based on your industry</li>
+                                    <li>Automated risk assessment</li>
+                                    <li>Dynamic legal language</li>
+                                    <li>Editable sections for fine-tuning</li>
+                                </ul>
+                                <p><em>Note: The AI will generate a contract tailored to your input. This preview outlines features, not the final document.</em></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-actions">
+                    <div style="text-align: center; margin-top: 2rem;">
+                        <input type="submit" value="Confirm and Generate">
+                    </div>
+                    <a href="/" class="btn-secondary">
+                        Start Over
+                    </a>
+                </div>
+            </form>
+        {% endif %}
+    </div>
+    
+    <!-- Modal Structure -->
+    <div class="modal" id="preview-modal">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeModal()">&times;</span>
+            <div id="modal-preview-content"></div>
+        </div>
+    </div>
+    
+    <footer>
+        <p>AI Contract Generator | Not a substitute for legal advice</p>
+    </footer>
+
+    <script>
+        // Show/hide non-compete details based on radio selection
+        document.querySelectorAll('input[name="non_compete"]').forEach(radio => {
+            radio.addEventListener('change', function() {
+                const detailsContainer = document.getElementById('non_compete_details_container');
+                detailsContainer.style.display = this.value === 'yes' ? 'block' : 'none';
+            });
+        });
+        
+        // Initialize non-compete details visibility
+        document.addEventListener('DOMContentLoaded', function() {
+            const selectedRadio = document.querySelector('input[name="non_compete"]:checked');
+            if (selectedRadio) {
+                const detailsContainer = document.getElementById('non_compete_details_container');
+                detailsContainer.style.display = selectedRadio.value === 'yes' ? 'block' : 'none';
+            }
+        });
+
+        // Modal functionality
+        function openModal(previewId) {
+            const modal = document.getElementById('preview-modal');
+            const modalContent = document.getElementById('modal-preview-content');
+            const previewContent = document.getElementById(previewId).innerHTML;
+            modalContent.innerHTML = previewContent;
+            modal.style.display = 'flex';
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('preview-modal');
+            modal.style.display = 'none';
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('preview-modal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>

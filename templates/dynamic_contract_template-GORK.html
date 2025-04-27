@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ contract_type }} Contract</title>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --dark-color: #333;
+            --light-color: #f9f9f9;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            line-height: 1.6;
+            color: var(--dark-color);
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: var(--light-color);
+        }
+
+        .contract-container {
+            background: white;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .contract-header {
+            text-align: center;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid var(--secondary-color);
+            padding-bottom: 1rem;
+        }
+
+        h1 {
+            font-family: 'Playfair Display', serif;
+            color: var(--primary-color);
+            font-size: 1.5rem;
+            margin-bottom: 0.25rem;
+            text-transform: uppercase;
+        }
+
+        h2 {
+            font-family: 'Playfair Display', serif;
+            color: var(--primary-color);
+            font-size: 1rem;
+            margin: 1rem 0 1rem;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 0.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        p {
+            margin-bottom: 1rem;
+            text-align: justify;
+        }
+
+        .effective-date {
+            text-align: center;
+            font-style: italic;
+            margin-bottom: 0.5rem;
+        }
+
+        .parties {
+            overflow: hidden;
+            margin: 2rem 0;
+        }
+
+        .party {
+            width: 45%;
+            margin-right: 5%;
+            float: left;
+        }
+
+        .party:last-child {
+            margin-right: 0;
+            float: right;
+        }
+
+        .party-name {
+            font-weight: bold;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .signature-block {
+            overflow: hidden;
+            margin-top: 4rem;
+        }
+
+        .signature {
+            width: 45%;
+            border-top: 1px solid #333;
+            padding-top: 1rem;
+            float: left;
+        }
+
+        .signature:last-child {
+            float: right;
+        }
+
+        .signature-label {
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 2rem;
+            font-size: 0.9rem;
+            color: #777;
+        }
+
+        .clause {
+            margin-bottom: 1.5rem;
+        }
+
+        .editable-clause {
+            padding: 0.5rem;
+            border: 1px solid transparent;
+            border-radius: 4px;
+            transition: border-color 0.3s, background-color 0.3s;
+        }
+
+        .editable-clause:hover {
+            border-color: #ccc;
+            background-color: #f9f9f9;
+        }
+
+        .editable-clause[contenteditable="true"] {
+            border-color: var(--secondary-color);
+            background-color: #f0f8ff;
+            outline: none;
+        }
+
+        .editable-clause ol {
+            margin: 0.5rem 0 0.5rem 2rem;
+            padding: 0;
+        }
+
+        .editable-clause li {
+            margin-bottom: 0.5rem;
+        }
+
+        .edit-button, .save-button {
+            background-color: var(--secondary-color);
+            color: white;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            margin-left: 10px;
+        }
+
+        .edit-button:hover, .save-button:hover {
+            background-color: #2980b9;
+        }
+
+        .download-button {
+            background-color: var(--secondary-color);
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            border: none;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .download-button:hover {
+            background-color: #2980b9;
+        }
+
+        @media print {
+            .contract-container {
+                margin: 0.5in;
+            }
+            body {
+                margin: 0;
+                padding: 0;
+            }
+            .edit-button, .save-button, .download-button {
+                display: none;
+            }
+            .editable-clause {
+                border: none;
+                background: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="contract-container">
+        <div class="contract-header">
+            <h1>{{ contract_type | upper }} CONTRACT</h1>
+            <p class="effective-date">Effective as of {% if contract_type == "Non-Disclosure Agreement (NDA)" %}{{ full_data.effective_date }}{% else %}{{ full_data.start_date }}{% endif %}</p>
+        </div>
+
+        <div class="parties">
+            <div class="party">
+                <div class="party-name">
+                    {% if contract_type == "Non-Disclosure Agreement (NDA)" %}{{ full_data.disclosing_party }}{% elif contract_type == "Employment Contract" %}{{ full_data.employer_name }}{% else %}{{ full_data.client_name }}{% endif %}
+                </div>
+                <div>
+                    {% if contract_type == "Non-Disclosure Agreement (NDA)" %}(the "Disclosing Party"){% elif contract_type == "Employment Contract" %}(the "Employer"){% else %}(the "Client"){% endif %}
+                </div>
+            </div>
+            <div class="party">
+                <div class="party-name">
+                    {% if contract_type == "Non-Disclosure Agreement (NDA)" %}{{ full_data.receiving_party }}{% elif contract_type == "Employment Contract" %}{{ full_data.employee_name }}{% else %}{{ full_data.provider_name }}{% endif %}
+                </div>
+                <div>
+                    {% if contract_type == "Non-Disclosure Agreement (NDA)" %}(the "Receiving Party"){% elif contract_type == "Employment Contract" %}(the "Employee"){% else %}(the "Provider"){% endif %}
+                </div>
+            </div>
+        </div>
+
+        <h2>Recitals</h2>
+        <p>WHEREAS, the Parties wish to enter into this Agreement to define their rights and obligations;</p>
+        <p>NOW, THEREFORE, in consideration of the mutual promises and covenants contained herein, the Parties agree as follows:</p>
+
+        <h2>Terms and Conditions</h2>
+
+        {% set clause_number = namespace(value=1) %}
+        {% if contract_type == "Non-Disclosure Agreement (NDA)" %}
+            {% for clause in ["purpose", "confidential_information", "obligations", "term", "termination", "governing_law", "data_privacy"] %}
+                {% if full_data[clause] is defined %}
+                    <div class="clause">
+                        <h2>{{ clause_number.value }}. {{ clause | replace('_', ' ') | title }} <button class="edit-button" onclick="toggleEdit('{{ clause }}')">Edit</button></h2>
+                        <div id="{{ clause }}" class="editable-clause" data-field="{{ clause }}">
+                            <ol>
+                                {% set items = full_data[clause].split('\n') if '\n' in full_data[clause] else full_data[clause].split('.') %}
+                                {% for item in items %}
+                                    {% if item|trim %}
+                                        <li>{{ item|trim }}</li>
+                                    {% endif %}
+                                {% endfor %}
+                                {% if not items|length or not items[0]|trim %}
+                                    <li>{{ full_data[clause] }}</li>
+                                {% endif %}
+                            </ol>
+                        </div>
+                    </div>
+                    {% set clause_number.value = clause_number.value + 1 %}
+                {% endif %}
+            {% endfor %}
+            {% if full_data.non_compete is defined %}
+                <div class="clause">
+                    <h2>{{ clause_number.value }}. Non-Compete <button class="edit-button" onclick="toggleEdit('non_compete')">Edit</button></h2>
+                    <div id="non_compete" class="editable-clause" data-field="non_compete">
+                        <ol>
+                            {% set items = full_data.non_compete.split('\n') if '\n' in full_data.non_compete else full_data.non_compete.split('.') %}
+                            {% for item in items %}
+                                {% if item|trim %}
+                                    <li>{{ item|trim }}</li>
+                                {% endif %}
+                            {% endfor %}
+                            {% if not items|length or not items[0]|trim %}
+                                <li>{{ full_data.non_compete }}</li>
+                            {% endif %}
+                        </ol>
+                    </div>
+                </div>
+                {% set clause_number.value = clause_number.value + 1 %}
+            {% endif %}
+        {% elif contract_type == "Employment Contract" %}
+            {% for clause in ["position_and_duties", "compensation", "term_of_employment", "confidentiality", "termination", "governing_law", "benefits"] %}
+                {% if full_data[clause] is defined %}
+                    <div class="clause">
+                        <h2>{{ clause_number.value }}. {{ clause | replace('_', ' ') | title }} <button class="edit-button" onclick="toggleEdit('{{ clause }}')">Edit</button></h2>
+                        <div id="{{ clause }}" class="editable-clause" data-field="{{ clause }}">
+                            <ol>
+                                {% set items = full_data[clause].split('\n') if '\n' in full_data[clause] else full_data[clause].split('.') %}
+                                {% for item in items %}
+                                    {% if item|trim %}
+                                        <li>{{ item|trim }}</li>
+                                    {% endif %}
+                                {% endfor %}
+                                {% if not items|length or not items[0]|trim %}
+                                    <li>{{ full_data[clause] }}</li>
+                                {% endif %}
+                            </ol>
+                        </div>
+                    </div>
+                    {% set clause_number.value = clause_number.value + 1 %}
+                {% endif %}
+            {% endfor %}
+            {% if full_data.non_compete is defined %}
+                <div class="clause">
+                    <h2>{{ clause_number.value }}. Non-Compete <button class="edit-button" onclick="toggleEdit('non_compete')">Edit</button></h2>
+                    <div id="non_compete" class="editable-clause" data-field="non_compete">
+                        <ol>
+                            {% set items = full_data.non_compete.split('\n') if '\n' in full_data.non_compete else full_data.non_compete.split('.') %}
+                            {% for item in items %}
+                                {% if item|trim %}
+                                    <li>{{ item|trim }}</li>
+                                {% endif %}
+                            {% endfor %}
+                            {% if not items|length or not items[0]|trim %}
+                                <li>{{ full_data.non_compete }}</li>
+                            {% endif %}
+                        </ol>
+                    </div>
+                </div>
+                {% set clause_number.value = clause_number.value + 1 %}
+            {% endif %}
+        {% elif contract_type == "Service Agreement" %}
+            {% for clause in ["scope_of_services", "term_of_agreement", "payment_terms", "confidentiality", "termination", "governing_law", "independent_contractor_status"] %}
+                {% if full_data[clause] is defined %}
+                    <div class="clause">
+                        <h2>{{ clause_number.value }}. {{ clause | replace('_', ' ') | title }} <button class="edit-button" onclick="toggleEdit('{{ clause }}')">Edit</button></h2>
+                        <div id="{{ clause }}" class="editable-clause" data-field="{{ clause }}">
+                            <ol>
+                                {% set items = full_data[clause].split('\n') if '\n' in full_data[clause] else full_data[clause].split('.') %}
+                                {% for item in items %}
+                                    {% if item|trim %}
+                                        <li>{{ item|trim }}</li>
+                                    {% endif %}
+                                {% endfor %}
+                                {% if not items|length or not items[0]|trim %}
+                                    <li>{{ full_data[clause] }}</li>
+                                {% endif %}
+                            </ol>
+                        </div>
+                    </div>
+                    {% set clause_number.value = clause_number.value + 1 %}
+                {% endif %}
+            {% endfor %}
+            {% if full_data.indemnification is defined %}
+                <div class="clause">
+                    <h2>{{ clause_number.value }}. Indemnification <button class="edit-button" onclick="toggleEdit('indemnification')">Edit</button></h2>
+                    <div id="indemnification" class="editable-clause" data-field="indemnification">
+                        <ol>
+                            {% set items = full_data.indemnification.split('\n') if '\n' in full_data.indemnification else full_data.indemnification.split('.') %}
+                            {% for item in items %}
+                                {% if item|trim %}
+                                    <li>{{ item|trim }}</li>
+                                {% endif %}
+                            {% endfor %}
+                            {% if not items|length or not items[0]|trim %}
+                                <li>{{ full_data.indemnification }}</li>
+                            {% endif %}
+                        </ol>
+                    </div>
+                </div>
+                {% set clause_number.value = clause_number.value + 1 %}
+            {% endif %}
+        {% endif %}
+
+        <div class="signature-block">
+            <div class="signature">
+                <div class="signature-label">
+                    {% if contract_type == "Non-Disclosure Agreement (NDA)" %}Disclosing Party{% elif contract_type == "Employment Contract" %}Employer{% else %}Client{% endif %}:
+                </div>
+                <div>
+                    {% if contract_type == "Non-Disclosure Agreement (NDA)" %}{{ full_data.disclosing_party }}{% elif contract_type == "Employment Contract" %}{{ full_data.employer_name }}{% else %}{{ full_data.client_name }}{% endif %}
+                </div>
+                <div style="margin-top: 3rem;">Signature: ___________________________</div>
+                <div>Name: ___________________________</div>
+                <div>Title: ___________________________</div>
+                <div>Date: ___________________________</div>
+            </div>
+            <div class="signature">
+                <div class="signature-label">
+                    {% if contract_type == "Non-Disclosure Agreement (NDA)" %}Receiving Party{% elif contract_type == "Employment Contract" %}Employee{% else %}Provider{% endif %}:
+                </div>
+                <div>
+                    {% if contract_type == "Non-Disclosure Agreement (NDA)" %}{{ full_data.receiving_party }}{% elif contract_type == "Employment Contract" %}{{ full_data.employee_name }}{% else %}{{ full_data.provider_name }}{% endif %}
+                </div>
+                <div style="margin-top: 3rem;">Signature: ___________________________</div>
+                <div>Name: ___________________________</div>
+                <div>Title: ___________________________</div>
+                <div>Date: ___________________________</div>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 2rem;">
+            <form method="POST" action="{{ url_for('download_pdf', template_choice='dynamic') }}">
+                <input type="hidden" name="contract_id" value="{{ contract_id }}">
+                <input type="hidden" name="original_data_json" id="original_data_json" value="{{ full_data_json | safe }}">
+                <button type="submit" class="download-button">Download as PDF</button>
+            </form>
+        </div>
+
+        <div class="footer">
+            <p>Generated by AI Contract Generator on {{ generation_date }}. Not legal advice.</p>
+        </div>
+    </div>
+
+    <script>
+        let contractData = JSON.parse(document.getElementById('original_data_json').value);
+
+        function toggleEdit(field) {
+            const clause = document.getElementById(field);
+            const button = clause.previousElementSibling.querySelector('.edit-button, .save-button');
+            
+            if (clause.contentEditable === 'true') {
+                // Save changes
+                const items = clause.querySelectorAll('li');
+                const text = Array.from(items).map(item => item.innerText.trim()).filter(text => text).join('\n');
+                contractData[field] = text || clause.innerText.trim();
+                document.getElementById('original_data_json').value = JSON.stringify(contractData);
+                clause.contentEditable = 'false';
+                clause.classList.remove('editing');
+                button.textContent = 'Edit';
+                button.classList.remove('save-button');
+                button.classList.add('edit-button');
+            } else {
+                // Enter edit mode
+                clause.contentEditable = 'true';
+                clause.classList.add('editing');
+                clause.focus();
+                button.textContent = 'Save';
+                button.classList.remove('edit-button');
+                button.classList.add('save-button');
+            }
+        }
+
+        // Prevent Enter key from adding new lines in contenteditable, add new list item instead
+        document.querySelectorAll('.editable-clause').forEach(clause => {
+            clause.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    const ol = clause.querySelector('ol');
+                    const newLi = document.createElement('li');
+                    newLi.textContent = '';
+                    ol.appendChild(newLi);
+                    newLi.focus();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

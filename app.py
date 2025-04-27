@@ -3,7 +3,7 @@
 from flask import Flask, request, render_template, send_file
 from io import BytesIO
 import json
-from helpers import classify_contract_type, extract_entities, map_entities_to_fields, generate_dynamic_clauses
+from helpers import classify_contract_type, extract_entities, map_entities_to_fields, generate_legal_clause
 import pdfkit
 from datetime import datetime
 import tempfile
@@ -53,32 +53,36 @@ def index():
     if request.method == 'POST':
         prompt = request.form['prompt']
         contract_type = classify_contract_type(prompt)
-        entities = extract_entities(prompt)
-        data, missing = map_entities_to_fields(contract_type, entities)
-        contract_id = get_contract_id(contract_type)
-        
-        json_data = json.dumps(data)
-        print("Sending to index.html for validation:", {"contract_type": contract_type, "data": data, "missing": missing})
-        
-        # Generate reply if fields are missing
-        reply = generate_missing_fields_message(contract_type, data, missing)
-        if reply:
-            return render_template('index.html', 
-                                 contract_type=contract_type, 
-                                 original_data_json=json_data, 
-                                 original_data=data, 
-                                 missing=missing, 
-                                 reply=reply,
-                                 contract_id=contract_id,
-                                 step="validate")
+
+        if contract_type == "unknown":
+            return render_template('index.html', error="Unknown contract type. Please provide a valid contract type in your prompt.")
         else:
-            return render_template('index.html', 
-                                 contract_type=contract_type, 
-                                 original_data_json=json_data, 
-                                 original_data=data,
-                                 missing=missing,
-                                 contract_id=contract_id,
-                                 step="validate")
+            entities = extract_entities(prompt)
+            data, missing = map_entities_to_fields(contract_type, entities)
+            contract_id = get_contract_id(contract_type)
+        
+            json_data = json.dumps(data)
+            print("Sending to index.html for validation:", {"contract_type": contract_type, "data": data, "missing": missing})
+            
+            # Generate reply if fields are missing
+            reply = generate_missing_fields_message(contract_type, data, missing)
+            if reply:
+                return render_template('index.html', 
+                                    contract_type=contract_type, 
+                                    original_data_json=json_data, 
+                                    original_data=data, 
+                                    missing=missing, 
+                                    reply=reply,
+                                    contract_id=contract_id,
+                                    step="validate")
+            else:
+                return render_template('index.html', 
+                                    contract_type=contract_type, 
+                                    original_data_json=json_data, 
+                                    original_data=data,
+                                    missing=missing,
+                                    contract_id=contract_id,
+                                    step="validate")
     return render_template('index.html')
 
 # @app.route('/validate', methods=['POST'])
@@ -195,64 +199,215 @@ def generate():
     full_data = json.loads(request.form['original_data'])
     template_choice = request.form['template_choice']
     contract_id = request.form['contract_id']
-    
+
+    required_fields = {
+        "Non-Disclosure Agreement (NDA)": ["disclosing_party", "receiving_party", "effective_date", "confidentiality_period"],
+        "Employment Contract": ["employee_name", "employer_name", "start_date", "position", "salary"],
+        "Service Agreement": ["client_name", "provider_name", "start_date", "end_date", "service_description"],
+    }
+
+    # Validate required fields
+    if contract_type not in required_fields:
+        return {"error": f"Unsupported contract type: {contract_type}"}, 400
+    missing_fields = [field for field in required_fields[contract_type] if field not in full_data or not full_data[field]]
+    if missing_fields:
+        return {"error": f"Missing required fields: {', '.join(missing_fields)}"}, 400
+
     print("Received in /generate:", full_data)
+
     if template_choice == 'dynamic':
-        # Generate dynamic clauses using your model
-        dynamic_clauses = generate_dynamic_clauses(contract_type, full_data)
+        # Define standard clauses for each contract type
+        standard_clauses = {
+            "Non-Disclosure Agreement (NDA)": [
+                "purpose", "confidential_information", "obligations", "term",
+                "termination","non_compete", "governing_law", "data_privacy"
+            ],
+            "Employment Contract": [
+                "position_and_duties", "compensation", "term_of_employment",
+                "confidentiality", "termination", "non_compete", "governing_law", "benefits"
+            ],
+            "Service Agreement": [
+                "scope_of_services", "term_of_agreement", "payment_terms",
+                "confidentiality", "termination", "indemnification", "governing_law", "independent_contractor_status"
+            ],
+        }
+
+        # Include optional clauses if fields are provided
+        optional_clauses = {
+            "Non-Disclosure Agreement (NDA)": ["non_compete"],
+            "Employment Contract": ["non_compete"],
+            "Service Agreement": ["indemnification"],
+        }
+
+        # Build fields dictionary based on contract type
+        fields = {}
+        dynamic_contract_template = "dynamic_nda_template_1.html"
+        if contract_type == "Non-Disclosure Agreement (NDA)":
+            fields = {
+                "disclosing_party": full_data["disclosing_party"],
+                "receiving_party": full_data["receiving_party"],
+                "effective_date": full_data["effective_date"],
+                "confidentiality_period": full_data["confidentiality_period"],
+                "party1": full_data["disclosing_party"],
+                "party2": full_data["receiving_party"],
+            }
+            dynamic_contract_template = "dynamic_nda_template_1.html"
+        elif contract_type == "Employment Contract":
+            fields = {
+                "employee_name": full_data["employee_name"],
+                "employer_name": full_data["employer_name"],
+                "start_date": full_data["start_date"],
+                "position": full_data["position"],
+                "salary": full_data["salary"],
+                "vacation_days": full_data.get("vacation_days", "15"),  # Default for benefits clause
+                "party1": full_data["employee_name"],
+                "party2": full_data["employer_name"],
+            }
+            dynamic_contract_template = "dynamic_emp_template_1.html"
+        elif contract_type == "Service Agreement":
+            fields = {
+                "client_name": full_data["client_name"],
+                "provider_name": full_data["provider_name"],
+                "start_date": full_data["start_date"],
+                "end_date": full_data["end_date"],
+                "service_description": full_data["service_description"],
+                "party1": full_data["client_name"],
+                "party2": full_data["provider_name"],
+            }
+            dynamic_contract_template = "dynamic_sa_template_1.html"
+
+        # Generate dynamic clauses
+        dynamic_clauses = {}
+        download =True,
+        for clause in standard_clauses[contract_type]:
+            dynamic_clauses[clause] = generate_legal_clause(fields, clause, contract_type)
+
+        # Generate optional clauses if fields are provided
+        for clause in optional_clauses.get(contract_type, []):
+            if full_data.get(clause):
+                dynamic_clauses[clause] = generate_legal_clause(fields, clause, contract_type)
+
         full_data.update(dynamic_clauses)
-        
-        return render_template('dynamic_nda_template.html',
-                             contract_type=contract_type,
-                             full_data_json=json.dumps(full_data),
-                             full_data=full_data)
+        print("Dynamic clauses generated:", dynamic_clauses)
+
+        # Render the dynamic template
+        return render_template(
+            dynamic_contract_template,
+            contract_type=contract_type,
+            original_data_json=json.dumps(full_data),
+            full_data=full_data,
+            contract_id=contract_id,
+            download = True,
+            generation_date="2025-04-28"  # Adjust as needed
+        )
     else:
-        # if(contract_type == "Non-Disclosure Agreement (NDA)"):
-        #     template_name = "nda_template"
-        #     full_data["dynamic_clauses"] = "Dynamic clauses for NDA"
-        # elif(contract_type == "Employment Contract"):
-        #     template_name = "employment_contract"
-        #     full_data["dynamic_clauses"] = "Dynamic clauses for Employment Contract"
-        # elif(contract_type == "Service Agreement"):
-        #     template_name = "employment_contract"
-        #     full_data["dynamic_clauses"] = "Dynamic clauses for Service Agreement"
-        
+        # Render static template
         return render_template(
             f"{contract_id}_template_{template_choice}.html",
-            download = True,
+            download=True,
             original_data_json=json.dumps(full_data),
-            **full_data)
+            **full_data
+        )
+    # return jsonify({"html": rendered_html})
     
+# def generate():
+#     contract_type = request.form['contract_type']
+#     full_data = json.loads(request.form['original_data'])
+#     template_choice = request.form['template_choice']
+#     contract_id = request.form['contract_id']
+
+#     required_fields = {
+#     "Non-Disclosure Agreement (NDA)": ["disclosing_party", "receiving_party", "effective_date", "confidentiality_period"],
+#     "Employment Contract": ["employee_name", "employer_name", "start_date", "position", "salary"],
+#     "Service Agreement": ["client_name", "provider_name", "start_date", "end_date", "service_description"],
+#     }
     
-@app.route('/generate_dynamic', methods=['POST'])
-def generate_dynamic():
-    contract_type = request.form['contract_type']
-    full_data = json.loads(request.form['full_data'])
-    template_choice = request.form['template_choice']
-    
-    if template_choice == 'dynamic':
-        # Generate dynamic clauses using your model
-        dynamic_clauses = generate_dynamic_clauses(contract_type, full_data)
-        full_data.update(dynamic_clauses)
+#     print("Received in /generate:", full_data)
+#     if template_choice == 'dynamic':
+#         # Generate dynamic clauses for all required types
+#         # dynamic_clauses = {
+#         #     "confidentiality": generate_dynamic_clauses(contract_type, "confidentiality", full_data),
+#         #     "data_privacy": generate_dynamic_clauses(contract_type, "data_privacy", full_data),
+#         #     "termination": generate_dynamic_clauses(contract_type, "termination", full_data),
+#         # }
+#         # generate_legal_clause(party1, party2, date, duration, clause_type, agreement_type):
+#         dynamic_clauses = {
+#             "confidentiality": generate_legal_clause(
+#                 full_data['disclosing_party'], 
+#                 full_data['receiving_party'],
+#                 full_data['effective_date'], 
+#                 full_data['confidentiality_period'], 
+#                 "confidentiality",
+#                 'Non-Disclosure Agreement (NDA)'),
+#             "data_privacy": generate_legal_clause(
+#                 full_data['disclosing_party'], 
+#                 full_data['receiving_party'],
+#                 full_data['effective_date'], 
+#                 full_data['confidentiality_period'], 
+#                 "data_privacy",
+#                 'Non-Disclosure Agreement (NDA)'),
+#             "termination": generate_legal_clause(
+#                 full_data['disclosing_party'], 
+#                 full_data['receiving_party'],
+#                 full_data['effective_date'], 
+#                 full_data['confidentiality_period'], 
+#                 "termination",
+#                 'Non-Disclosure Agreement (NDA)'),
+#         }
+#         if contract_type in ["Employment Contract"]:
+#             dynamic_clauses["payment"] = generate_legal_clause(
+#                 full_data['employee_name'], 
+#                 full_data['employer_name'],
+#                 full_data['start_date'], 
+#                 full_data['position'], 
+#                 full_data['salary'], 
+#                 "payment",
+#                 'Employment Contract'),
         
-        return render_template('dynamic_nda_template.html',
-                             contract_type=contract_type,
-                             full_data_json=json.dumps(full_data),
-                             full_data=full_data)
-    else:
-        #return render_template(f'{contract_type.lower()}_template.html', **full_data)
-        if(contract_type == "Non-Disclosure Agreement (NDA)"):
-            template_name = "nda_template.html"
-            full_data["dynamic_clauses"] = "Dynamic clauses for NDA"
-        elif(contract_type == "Employment Contract"):
-            template_name = "employment_contract.html"
-            full_data["dynamic_clauses"] = "Dynamic clauses for Employment Contract"
-        elif(contract_type == "Service Agreement"):
-            template_name = "employment_contract.html"
-            full_data["dynamic_clauses"] = "Dynamic clauses for Service Agreement"
-        # Add more contract types and their dynamic clauses as needed
-        # Render the appropriate template based on contract type
-        return render_template(template_name, **full_data)
+#         full_data.update(dynamic_clauses)
+#         print("Dynamic clauses generated:", dynamic_clauses)
+#         # Render the template with dynamic clauses
+#         return render_template('dynamic_contract_template.html',
+#                              contract_type=contract_type,
+#                              full_data_json=json.dumps(full_data),
+#                              full_data=full_data,
+#                              contract_id=contract_id)
+#     else:
+#         return render_template(
+#             f"{contract_id}_template_{template_choice}.html",
+#             download=True,
+#             original_data_json=json.dumps(full_data),
+#             **full_data)
+    
+# @app.route('/generate_dynamic', methods=['POST'])
+# def generate_dynamic():
+#     contract_type = request.form['contract_type']
+#     full_data = json.loads(request.form['full_data'])
+#     template_choice = request.form['template_choice']
+    
+#     if template_choice == 'dynamic':
+#         # Generate dynamic clauses using your model
+#         dynamic_clauses = generate_dynamic_clauses(contract_type, full_data)
+#         full_data.update(dynamic_clauses)
+        
+#         return render_template('dynamic_nda_template.html',
+#                              contract_type=contract_type,
+#                              full_data_json=json.dumps(full_data),
+#                              full_data=full_data)
+#     else:
+#         #return render_template(f'{contract_type.lower()}_template.html', **full_data)
+#         if(contract_type == "Non-Disclosure Agreement (NDA)"):
+#             template_name = "nda_template.html"
+#             full_data["dynamic_clauses"] = "Dynamic clauses for NDA"
+#         elif(contract_type == "Employment Contract"):
+#             template_name = "employment_contract.html"
+#             full_data["dynamic_clauses"] = "Dynamic clauses for Employment Contract"
+#         elif(contract_type == "Service Agreement"):
+#             template_name = "employment_contract.html"
+#             full_data["dynamic_clauses"] = "Dynamic clauses for Service Agreement"
+#         # Add more contract types and their dynamic clauses as needed
+#         # Render the appropriate template based on contract type
+#         return render_template(template_name, **full_data)
 
 @app.route('/submit_missing', methods=['POST'])
 def submit_missing():
@@ -325,6 +480,7 @@ def download_pdf(template_choice):
     contract_id = request.form.get('contract_id')
     original_data_json = request.form.get('original_data_json')
     original_data = json.loads(original_data_json) if original_data_json else {}
+    #full_data = request.form.get('original_data_json')
     logger.info(f"Generating PDF for template {template_choice} with data: {original_data}")
 
     template_file = f"{contract_id}_template_{template_choice}.html"
@@ -337,7 +493,7 @@ def download_pdf(template_choice):
 
     # Render the template with provided data
     try:
-        rendered_html = render_template(template_file, **original_data, generation_date=datetime.now().strftime('%Y-%m-%d'))
+        rendered_html = render_template(template_file, full_data = original_data, **original_data, generation_date=datetime.now().strftime('%Y-%m-%d'))
         logger.info(f"Template file: {template_file}")
         logger.info(f"Rendered HTML (full): {rendered_html}")
     except Exception as e:

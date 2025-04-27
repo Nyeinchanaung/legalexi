@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ contract_type }} Contract</title>
+    <style>
+        body {
+            font-family: 'Times New Roman', Times, serif;
+            line-height: 1.6;
+            margin: 2rem;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            color: #333;
+        }
+        h1 {
+            text-align: center;
+            font-size: 1.8rem;
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+            border-bottom: 2px solid #000;
+            padding-bottom: 0.5rem;
+        }
+        h2 {
+            font-size: 1.4rem;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+        }
+        h3 {
+            font-size: 1.2rem;
+            margin-top: 1.5rem;
+            margin-bottom: 0.8rem;
+        }
+        p, textarea {
+            font-size: 1rem;
+            margin-bottom: 1rem;
+        }
+        .editable-section {
+            margin-bottom: 2rem;
+            padding: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: #f9f9f9;
+        }
+        .clause-editor {
+            width: 100%;
+            min-height: 150px;
+            padding: 1rem;
+            font-family: 'Times New Roman', Times, serif;
+            font-size: 1rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            resize: vertical;
+        }
+        .signature-section {
+            margin-top: 3rem;
+            display: flex;
+            justify-content: space-between;
+        }
+        .signature-block {
+            width: 45%;
+        }
+        .signature-line {
+            border-top: 1px solid #000;
+            margin-top: 3rem;
+            width: 100%;
+        }
+        .date-line {
+            margin-top: 0.5rem;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <!-- Contract Header -->
+    <h1>{{ contract_type | upper }} CONTRACT</h1>
+
+    <!-- Introductory Paragraph -->
+    {% if contract_type == "Non-Disclosure Agreement (NDA)" %}
+        <p>This Non-Disclosure Agreement (hereinafter referred to as the "Agreement") is entered into as of <strong>{{ full_data.effective_date }}</strong> (the "Effective Date") by and between <strong>{{ full_data.disclosing_party }}</strong> (the "Disclosing Party") and <strong>{{ full_data.receiving_party }}</strong> (the "Receiving Party"), collectively referred to as the "Parties."</p>
+    {% elif contract_type == "Employment Contract" %}
+        <p>This Employment Agreement (hereinafter referred to as the "Agreement") is entered into as of <strong>{{ full_data.start_date }}</strong> (the "Start Date") by and between <strong>{{ full_data.employee_name }}</strong> (the "Employee") and <strong>{{ full_data.employer_name }}</strong> (the "Employer"), collectively referred to as the "Parties."</p>
+    {% elif contract_type == "Service Agreement" %}
+        <p>This Service Agreement (hereinafter referred to as the "Agreement") is entered into as of <strong>{{ full_data.start_date }}</strong> (the "Start Date") by and between <strong>{{ full_data.client_name }}</strong> (the "Client") and <strong>{{ full_data.provider_name }}</strong> (the "Provider"), collectively referred to as the "Parties."</p>
+    {% endif %}
+
+    <!-- Recitals -->
+    <h2>RECITALS</h2>
+    <p>WHEREAS, the Parties wish to enter into this Agreement to define their rights and obligations;</p>
+    <p>NOW, THEREFORE, in consideration of the mutual promises and covenants contained herein, the Parties agree as follows:</p>
+
+    <!-- Clauses -->
+    <h2>TERMS AND CONDITIONS</h2>
+
+    <!-- Confidentiality Clause -->
+    <div class="editable-section">
+        <h3>1. Confidentiality</h3>
+        <textarea name="confidentiality" class="clause-editor">{{ full_data.confidentiality }}</textarea>
+    </div>
+
+    <!-- Data Privacy Clause -->
+    <div class="editable-section">
+        <h3>2. Data Privacy</h3>
+        <textarea name="data_privacy" class="clause-editor">{{ full_data.data_privacy }}</textarea>
+    </div>
+
+    <!-- Payment Clause (Employment and Service Agreements Only) -->
+    {% if contract_type in ["Employment Contract", "Service Agreement"] %}
+        <div class="editable-section">
+            <h3>3. Payment Terms</h3>
+            <textarea name="payment" class="clause-editor">{{ full_data.payment }}</textarea>
+        </div>
+    {% endif %}
+
+    <!-- Termination Clause -->
+    <div class="editable-section">
+        <h3>{% if contract_type in ["Employment Contract", "Service Agreement"] %}4{% else %}3{% endif %}. Termination</h3>
+        <textarea name="termination" class="clause-editor">{{ full_data.termination }}</textarea>
+    </div>
+
+    <!-- Non-Compete Clause (Optional) -->
+    {% if full_data.non_compete %}
+        <div class="editable-section">
+            <h3>{% if contract_type in ["Employment Contract", "Service Agreement"] %}5{% else %}4{% endif %}. Non-Compete</h3>
+            <textarea name="non_compete" class="clause-editor">{{ full_data.non_compete }}</textarea>
+        </div>
+    {% endif %}
+
+    <!-- Signature Section -->
+    <div class="signature-section">
+        <div class="signature-block">
+            {% if contract_type == "Non-Disclosure Agreement (NDA)" %}
+                <p><strong>{{ full_data.disclosing_party }}</strong><br>(Disclosing Party)</p>
+            {% elif contract_type == "Employment Contract" %}
+                <p><strong>{{ full_data.employer_name }}</strong><br>(Employer)</p>
+            {% elif contract_type == "Service Agreement" %}
+                <p><strong>{{ full_data.client_name }}</strong><br>(Client)</p>
+            {% endif %}
+            <p class="signature-line">Signature: ____________________________</p>
+            <p class="date-line">Date: ____________________________</p>
+        </div>
+        <div class="signature-block">
+            {% if contract_type == "Non-Disclosure Agreement (NDA)" %}
+                <p><strong>{{ full_data.receiving_party }}</strong><br>(Receiving Party)</p>
+            {% elif contract_type == "Employment Contract" %}
+                <p><strong>{{ full_data.employee_name }}</strong><br>(Employee)</p>
+            {% elif contract_type == "Service Agreement" %}
+                <p><strong>{{ full_data.provider_name }}</strong><br>(Provider)</p>
+            {% endif %}
+            <p class="signature-line">Signature: ____________________________</p>
+            <p class="date-line">Date: ____________________________</p>
+        </div>
+    </div>
+
+    <!-- Download PDF Button -->
+    <form method="POST" action="{{ url_for('download_pdf', template_choice='dynamic') }}">
+        <input type="hidden" name="contract_id" value="{{ contract_id }}">
+        <input type="hidden" name="original_data_json" value="{{ full_data_json }}">
+        <div style="text-align: center; margin-top: 2rem;">
+            <input type="submit" value="Download as PDF">
+        </div>
+    </form>
+</body>
+</html>
