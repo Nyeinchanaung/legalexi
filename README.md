@@ -54,7 +54,7 @@ This combination of Jinja2 template rendering, transformer-based legal clause mo
 ## Achievements So Far
 
 #### 1. System Architecture Designed
-![experiment-design-carbo (2)](https://github.com/user-attachments/assets/489426ac-f320-4fd2-bc83-8543db529530)
+![experiment-design-carbov5](https://github.com/user-attachments/assets/c4c7d815-8ac0-4845-bf6b-e1497ca350d0)
 <p align="center"> Figure 1: Expirement Design</p> 
 
 A modular NLP pipeline has been created, integrating the following components:
