@@ -115,16 +115,20 @@ A modular NLP pipeline has been created, integrating the following components:
 We evaluated the performance of GPT-2 and Qwen (LoRA) models on legal clause generation using the ContractNLI dataset. Evaluation was performed using standard language modeling loss and BERTScore.
 
 #### Evaluation Metrics
+
 <div align="center">
+
 | Metric            | Qwen              | GPT-2             |
-|:------------------|:------------------|:------------------|
+|:------------------:|:------------------:|:------------------:|
 | **Eval Loss**      | **0.473**          | 0.478             |
 | **BERTScore (P)**  | **0.8415**         | 0.7315            |
 | **BERTScore (R)**  | **0.8764**         | 0.7936            |
 | **BERTScore (F1)** | **0.8581**         | 0.7608            |
+
 </div>
 
 <p align="center"> **Table 1:** Evaluation results comparing Qwen and GPT-2 on legal clause generation.</p>
+
 #### Analysis
 - **Qwen1.5-0.5B-Chat** outperformed **GPT-2** across all metrics, achieving higher precision, recall, and F1 score.
 - The lower evaluation loss indicates that Qwen produces outputs more closely aligned with the ground truth clauses.
