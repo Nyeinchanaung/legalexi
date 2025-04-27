@@ -71,7 +71,7 @@ A modular NLP pipeline has been created, integrating the following components:
 
 #### 3. Model Fine-Tuning Completed
 
-- Qwen1.5-0.5B-Chat fine-tuned on the **ContractNLI** dataset using **LoRA** for efficient domain adaptation
+- Qwen1.5-0.5B-Chat fine-tuned on the **Legal-Clause-Instructions** dataset using **LoRA** for efficient domain adaptation
 - GPT-2 model fine-tuned as a baseline for performance comparison
 
 #### 4. Evaluation Conducted
