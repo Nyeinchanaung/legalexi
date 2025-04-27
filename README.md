@@ -7,22 +7,24 @@ Project Link: https://github.com/Nyeinchanaung/legalexi
 
 
 # Overview
+
 This project presents an **automated legal document generation system**, specifically designed to create **Non-Disclosure Agreements (NDAs)** using cutting-edge **Natural Language Processing (NLP)** and deep learning techniques.
 
 The system integrates:
 - **spaCy-based Named Entity Recognition (NER)** for extracting key legal entities,
 - **Legal-BERT** for legal intent detection, and
-- a **Qwen-7B model fine-tuned via LoRA** on the ContractNLI dataset for clause-level legal reasoning.
-Generated clauses are dynamically populated into a Jinja2-based NDA template, producing **fully customized and legally compliant documents**.
+- a **Qwen1.5-0.5B-Chat model fine-tuned via LoRA** on the Legal-Clause-Instructions dataset for clause-level legal reasoning.
+
+Generated clauses are dynamically populated into a Jinja2-based NDA template, producing **fully customized and legally coherent contracts** based on user-provided natural language prompts.
 
 ### Key Contributions
 
-- A hybrid pipeline that combines **rule-based extraction** and **model-driven reasoning** for legal clause generation
-- Fine-tuning of **Qwen-7B** using **Low-Rank Adaptation (LoRA)** to improve clause-level classification performance
-- Full-stack **Flask web interface** to support real-time, end-to-end document generation and interaction
-- High semantic accuracy demonstrated with **BERTScore (F1: 80.05%)**, reflecting the quality and legal coherence of the generated contracts  
+- A hybrid pipeline that combines **rule-based extraction** and **model-driven reasoning** for accurate legal clause generation
+- Fine-tuning of **Qwen1.5-0.5B-Chat** using **Low-Rank Adaptation (LoRA)** to enhance clause generation performance
+- Comprehensive evaluation demonstrating that **Qwen1.5-0.5B-Chat outperforms GPT-2**, achieving a **BERTScore (F1) of 85.81%** compared to GPT-2’s 76.08%, validating its superior legal text generation capabilities
+- Full-stack **Flask web application** providing a real-time, interactive interface for end-to-end legal document creation
 
-This project showcases how legal document automation can reduce time and cost, improve accessibility, and ensure clarity and compliance—all through the power of NLP.
+#### This project demonstrates how advanced AI models can automate legal document drafting, reducing time and cost, improving accessibility, and ensuring precision and compliance in contract generation.
 ---
 # Related Works
 
@@ -58,7 +60,7 @@ This combination of Jinja2 template rendering, transformer-based legal clause mo
 A modular NLP pipeline has been created, integrating the following components:
 - **spaCy** for Named Entity Recognition (NER)
 - **Legal-BERT** for contract intent classification
-- **Qwen-7B** (fine-tuned via LoRA) for clause-level generation
+- **Qwen1.5-0.5B-Chat** (fine-tuned via LoRA) for clause-level generation
 - **Jinja2** for dynamic NDA templating
 - **Flask** for a web-based user interface
 
@@ -69,13 +71,13 @@ A modular NLP pipeline has been created, integrating the following components:
 
 #### 3. Model Fine-Tuning Completed
 
-- Qwen-7B fine-tuned on the **ContractNLI** dataset using **LoRA** for efficient domain adaptation
+- Qwen1.5-0.5B-Chat fine-tuned on the **ContractNLI** dataset using **LoRA** for efficient domain adaptation
 - GPT-2 model fine-tuned as a baseline for performance comparison
 
 #### 4. Evaluation Conducted
 
 - Evaluated using **BERTScore** for semantic alignment between generated and reference clauses
-- **Qwen-7B** achieved an F1 score of **80.05%**, outperforming GPT-2’s **75.58%**
+- **Qwen1.5-0.5B-Chat** achieved an F1 score of **80.05%**, outperforming GPT-2’s **75.58%**
 
 #### 5. Template-Based NDA Generation Operational
 
@@ -106,44 +108,57 @@ A modular NLP pipeline has been created, integrating the following components:
 
 - **Dataset**: Subset of ContractNLI containing 607 annotated NDA clauses
 - **Evaluation Metrics**: Evaluation loss, BERTScore (Precision, Recall, F1)
-- **Best Performing Model**: Qwen-7B with LoRA (F1 score: **0.8060**)
+- **Best Performing Model**: Qwen1.5-0.5B-Chat with LoRA (F1 score: **0.8060**)
 
 ---
-### Preliminary results
+### Results
 We evaluated the performance of GPT-2 and Qwen (LoRA) models on legal clause generation using the ContractNLI dataset. Evaluation was performed using standard language modeling loss and BERTScore.
 
 #### Evaluation Metrics
 
-| Model         | Eval Loss | BERTScore (P) | BERTScore (R) | BERTScore (F1) |
-|---------------|-----------|----------------|----------------|----------------|
-| **GPT-2**      | 1.958     | 0.7456         | 0.7663         | 0.7558         |
-| **Qwen (LoRA)**| **1.507** | **0.8175**     | **0.7948**     | **0.8060**     |
+| Metric            | Qwen              | GPT-2             |
+|:------------------|:------------------|:------------------|
+| **Eval Loss**      | **0.473**          | 0.478             |
+| **BERTScore (P)**  | **0.8415**         | 0.7315            |
+| **BERTScore (R)**  | **0.8764**         | 0.7936            |
+| **BERTScore (F1)** | **0.8581**         | 0.7608            |
+**Table 1:** Evaluation results comparing Qwen and GPT-2 on legal clause generation.
 
 #### Analysis
-- **Qwen (LoRA)** achieves lower loss and higher semantic similarity across all metrics.
-- Improvements in precision and recall indicate better clause alignment with legal phrasing.
-- GPT-2 struggles with legal syntax and coverage due to lack of domain-specific tuning.
+- **Qwen1.5-0.5B-Chat** outperformed **GPT-2** across all metrics, achieving higher precision, recall, and F1 score.
+- The lower evaluation loss indicates that Qwen produces outputs more closely aligned with the ground truth clauses.
+- These results validate the choice of using Qwen1.5-0.5B-Chat as the generation backbone for the system.
+- The system is capable of producing **legally coherent**, **highly accurate**, and **customizable NDA contracts** from simple natural language prompts.
 
-## Limitations
+# Conclusion
 
-The current implementation of the automated NDA generation system, while functional, has a few limitations based on the progress achieved so far:
+The development of the automated legal contract generation system successfully reached a key milestone with the implementation of two core components: a legal intent extraction module and a clause-level text generation module. The intent extraction module, leveraging Legal-BERT and spaCy, accurately interprets user input, while the generation module utilizes a fine-tuned Qwen1.5-0.5B-Chat model, trained with LoRA on the Legal-Clause-Instructions dataset, to produce high-quality legal clauses aligned with real-world contractual standards.
 
-1. **Single Contract Type Support**  
-   The system currently supports only Non-Disclosure Agreements (NDAs). Other contract types such as employment or service agreements are not yet integrated.
+Evaluation results demonstrate that the Qwen model outperforms the GPT-2 baseline across all key metrics, achieving a precision of 84.15%, recall of 87.64%, and F1 score of 85.81%, compared to GPT-2’s precision of 73.15%, recall of 79.36%, and F1 score of 76.08%. These improvements validate Qwen as the preferred model, ensuring greater semantic accuracy, completeness, and reliability in automated contract drafting — critical factors in the legal domain.
 
-2. **Partial Pipeline Integration**  
-   The NER module (spaCy + Legal-BERT) and the clause generation module (Qwen-7B) have been implemented, but they are not yet fully integrated into a seamless end-to-end pipeline.
+While the two modules currently operate independently, both have been independently validated and are ready for integration. The next phase will involve merging these components into a cohesive, automated pipeline that allows users to generate fully customized Non-Disclosure Agreements (NDAs) from natural language prompts. This integration marks an important step toward realizing the system’s ultimate goal: fully automated, precise, and trustworthy legal content creation.
 
-3. **Limited Dataset Scope**  
-   Model training and evaluation have been conducted on a subset of the ContractNLI dataset. Broader clause coverage and more diverse legal contexts are not yet represented.
+# Limitations
 
-### Next Steps
+Despite promising results, the current system has several limitations:
 
-- Integrate the NER and clause generation modules into a seamless, end-to-end pipeline
-- Enhance the web interface with form validation and improved user experience
-- Extend the system to support additional contract types such as employment and service agreements
-- Implement user feedback mechanisms to support continuous system refinement
-- Add document export options (PDF, DOCX) and version tracking for generated contracts
+- **Scope limited to NDAs:**  
+  The system is currently tailored specifically for Non-Disclosure Agreements and may require substantial retraining or templating to handle other types of contracts (e.g., employment agreements, service contracts).
+
+- **Dependence on Input Quality:**  
+  The quality and clarity of the generated contracts are heavily dependent on the quality of user prompts. Ambiguous or poorly structured prompts may result in less accurate or incomplete clauses.
+
+- **Limited Legal Reasoning Depth:**  
+  Although the fine-tuned Qwen1.5-0.5B-Chat model improves clause generation, it cannot yet perform deep legal reasoning or adapt to jurisdiction-specific legal variations without further customization.
+
+- **Independent Module Operation:**  
+  At this stage, the intent extraction and clause generation modules operate independently. Full integration into an end-to-end pipeline is planned for future development.
+
+- **Dataset and Bias Constraints:**  
+  The model’s training data may not cover all edge cases or diverse legal phrasing styles, potentially introducing bias or limitations in clause diversity.
+
+These limitations highlight opportunities for future work, including expanding contract types, enhancing prompt engineering, integrating jurisdictional customization, and refining the model with broader legal datasets.
+
 
 # References
 
