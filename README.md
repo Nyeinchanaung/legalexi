@@ -107,7 +107,7 @@ A modular NLP pipeline has been created, integrating the following components:
 ### Experiment Highlights
 
 - **Dataset**:  
-  A curated subset of the ContractNLI dataset, consisting of 607 annotated Non-Disclosure Agreement (NDA) clauses, used for fine-tuning and evaluation.
+  A curated subset of the Legal-Clause-Instructions dataset, consisting of Training 4,557 samples and Test 507 samples.
 
 - **Evaluation Metrics**:  
   Performance was assessed using evaluation loss and BERTScore metrics, including Precision, Recall, and F1 score, to measure semantic alignment and output quality.
