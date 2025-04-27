@@ -146,14 +146,15 @@
             <!-- Initial prompt input -->
             <form method="POST" action="/">
                 <p>Describe the contract you need in plain English. Our AI will extract the key details and generate a professional document.</p>
+                <span style="font-style: italic;"><strong>Idea prompt:</strong> I need a non-disclosure agreement to protect my software idea. The disclosing party is the Asian Institute, and the receiving party is ABC Organisation. The duration is 1 month, starting from 01-05-2025.</span>
                 
                 <label for="prompt">Your contract request:</label>
-                <textarea id="prompt" name="prompt" placeholder="e.g., I need an NDA between Acme Corp and Beta Inc for a software development project" required></textarea>
+                <textarea id="prompt" name="prompt" placeholder="e.g., I need an NDA between Acme Corp and Beta Inc for a software development project" required>I need a non-disclosure agreement to protect my software idea. The disclosing party is the Asian Institute, and the receiving party is ABC Organisation. The duration is 1 month, starting from 01-05-2025.</textarea>
                 
                 <div style="text-align: center; margin-top: 1.5rem;">
                     <input type="submit" value="Start Contract Generation">
                 </div>
-            </form>
+                </form>
             
         {% elif step == "validate" %}
             <!-- Progress Steps -->
@@ -174,7 +175,7 @@
            
             <form method="POST" action="/validate">
                 <input type="hidden" name="contract_type" value="{{ contract_type }}">
-                <input type="textarea" name="original_data" value="{{ original_data_json }}">
+                <input type="hidden" name="original_data" value="{{ original_data_json }}">
                 <input type="hidden" name="contract_id" value="{{ contract_id }}">
                 
                 {% for field, value in original_data.items() %}
@@ -182,7 +183,7 @@
                     <input type="text" id="{{ field }}" name="{{ field }}" value="{{ value | default('') }}">
                 {% endfor %}
                 
-                <div style="text-align: center; margin-top: 2rem;">
+                <div style="text-align: center;">
                     <input type="submit" name="submit" value="Confirm and Proceed">
                 </div>
             </form>
@@ -215,7 +216,7 @@
                     <input type="text" id="{{ field }}" name="{{ field }}" required>
                 {% endfor %}
                 
-                <div style="text-align: center; margin-top: 2rem;">
+                <div style="text-align: center;">
                     <input type="submit" value="Submit Details">
                 </div>
             </form>
@@ -234,10 +235,10 @@
             <h2>Select Your {{ contract_type }} Template</h2>
             <p class="subtitle">Choose from our pre-designed templates or get an AI-generated custom contract</p>
             
-            <form method="POST" action="/generate">
+            <form method="POST" action="/generate" id="generateForm">
                 <input type="hidden" name="contract_type" value="{{ contract_type }}">
                 <input type="hidden" name="contract_id" value="{{ contract_id }}">
-                <input type="text" name="original_data" value="{{ original_data_json }}">
+                <input type="hidden" name="original_data" value="{{ original_data_json }}">
                 
                 <div class="template-gallery">
                     <!-- Template Option 1 -->
@@ -341,7 +342,7 @@
                 </div>
                 
                 <div class="form-actions">
-                    <div style="text-align: center; margin-top: 2rem;">
+                    <div style="text-align: center;">
                         <input type="submit" value="Confirm and Generate">
                     </div>
                     <a href="/" class="btn-secondary">
@@ -363,6 +364,13 @@
     <footer>
         <p>AI Contract Generator | Not a substitute for legal advice</p>
     </footer>
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <p class="loading-text" id="loadingText">Generating contract...</p>
+        </div>
+    </div>
 
     <script>
         // Show/hide non-compete details based on radio selection
@@ -403,5 +411,26 @@
             }
         });
     </script>
+    <script>
+        // Show the loading overlay when the "Confirm and Generate" button is clicked
+        document.getElementById("generateForm").addEventListener("submit", function(event) {
+            event.preventDefault(); // Prevent the default form submission
+            showLoadingOverlay(); // Show the loading overlay
+
+            // After showing the loading overlay, submit the form normally (page reload will happen)
+            setTimeout(function() {
+                document.getElementById("generateForm").submit(); // Actually submit the form after showing the loading overlay
+            }, 500); // A small delay to show the loading overlay before submission
+        });
+
+        function showLoadingOverlay() {
+            document.getElementById("loadingOverlay").style.display = "flex";
+        }
+
+        function hideLoadingOverlay() {
+            document.getElementById("loadingOverlay").style.display = "none";
+        }
+    </script>
+        
 </body>
 </html>

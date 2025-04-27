@@ -140,6 +140,46 @@ We evaluated the performance of GPT-2 and Qwen (LoRA) models on legal clause gen
 - These results validate the choice of using Qwen1.5-0.5B-Chat as the generation backbone for the system.
 - The system is capable of producing **legally coherent**, **highly accurate**, and **customizable NDA contracts** from simple natural language prompts.
 
+##### Legal-Bert Model Result
+- Query: I need nda between Company A and B organization
+- Predicted: Non-Disclosure Agreement (NDA) (Confidence: 1.00)
+- 
+- Query: Create an agreement for a consultant to audit our development team
+- Predicted: Service Agreement (Confidence: 1.00)
+- 
+- Query: We need employee agreement to hire software engineer
+- Predicted: Employment Contract (Confidence: 1.00)
+- 
+- Query: How are you?
+- Predicted: unknown (Confidence: 1.00)
+
+##### Generation Model Result
+Example Text:
+ WHEREAS, the Asian Institute possesses proprietary information relating to its business operations; and WHEREAS, the Asian Institute and ABC Organisation desire to explore a potential business relationship. 
+Prompt:
+##### Example Clause:
+WHEREAS, the Asian Institute possesses proprietary information relating to its business operations; and WHEREAS, the Asian Institute and ABC Organisation desire to explore a potential business relationship.
+
+##### Instruction:
+You are drafting a purpose clause for a Non-Disclosure Agreement (NDA).
+- Write in formal legal English.
+- Do NOT include any headings or titles.
+- Bullet point for each line.
+- END the clause completely.
+- DO NOT add address or location.
+- Avoid redundancy and repetition.
+Now, write the full legal clause sentence by setence accordingly.
+
+##### Response:
+
+`Generated Text:`
+
+1. Definition of Confidential Information: "Confidential Information" means any and all information disclosed by the Asian Institute to the ABC Organisation, whether in writing, orally, or by any other means, that is designated as confidential or that reasonably should be understood to be confidential given the nature of the information and the circumstances of disclosure. Confidential Information includes, but is not limited to, trade secrets, business plans, financial information, customer lists, and any other information that is not generally known to the public.
+
+2. Obligations of the Receiving Party: The Receiving Party agrees to hold the Confidential Information in strict confidence and not to disclose it to any third party without the prior written consent of the Asian Institute. The Receiving Party shall use the Confidential Information solely for the purpose of evaluating a potential business relationship between the two parties.
+
+3. Exceptions: The obligations of the Receiving Party under this Agreement shall not apply to any information that: (a) is or becomes generally available to the public through no fault of the Receiving Party; (b) was in the possession of the Receiving Party prior to its disclosure by the Asian Institute; (c) is rightfully obtained by the Receiving Party from a third party without restriction on disclosure; or (d) is independently developed by the Receiving Party without reference to the Confidential Information.
+
 # Conclusion
 
 The development of the automated legal contract generation system successfully reached a key milestone with the implementation of two core components: a legal intent extraction module and a clause-level text generation module. The intent extraction module, leveraging Legal-BERT and spaCy, accurately interprets user input, while the generation module utilizes a fine-tuned Qwen1.5-0.5B-Chat model, trained with LoRA on the Legal-Clause-Instructions dataset, to produce high-quality legal clauses aligned with real-world contractual standards.

@@ -224,8 +224,8 @@
             <form method="POST" action="/download_pdf/1">
                 <input type="hidden" name="contract_id" value="dynamic_emp">
                 <input type="hidden" name="template_choice" value="1">
-                <input type="text" name="full_data" value="{{ original_data_json }}">
-                <input type="text" name="original_data_json" value="{{ original_data_json }}">
+                <input type="hidden" name="full_data" value="{{ original_data_json }}">
+                <input type="hidden" name="original_data_json" value="{{ original_data_json }}">
                 <button type="submit" class="download-button">Download as PDF</button>
             </form>
         </div>

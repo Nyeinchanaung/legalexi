@@ -432,6 +432,18 @@ def generate_legal_clause(fields, clause_type, agreement_type):
 
     # Remove any headings or titles from the generated text
     generated_text = "\n".join(line for line in generated_text.split("\n") if not (line.isupper() or line.endswith(":"))).strip()
-
     print("Generated Text:\n", generated_text)
+    generated_text = remove_last_sentence(generated_text)
     return generated_text
+
+
+def remove_last_sentence(text):
+    sentences = text.split('.')
+    if len(sentences) <= 1:
+        return ""
+    
+    last_sentence = sentences.pop()
+    if last_sentence.strip():
+        return ".".join(sentences) + "."
+    else:
+        return ".".join(sentences)

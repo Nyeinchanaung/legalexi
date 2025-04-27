@@ -243,9 +243,9 @@
         {% if download %}
         <div style="text-align: center; margin-top: 2rem;"></div>
             <form method="POST" action="/download_pdf/1">
-                <input type="text" name="contract_id" value="nda">
+                <input type="hidden" name="contract_id" value="nda">
                 <input type="hidden" name="template_choice" value="1">
-                <input type="text" name="original_data_json" value="{{ original_data_json }}">
+                <input type="hidden" name="original_data_json" value="{{ original_data_json }}">
                 <button type="submit" class="download-button">Download as PDF</button>
             </form>
         </div>  
