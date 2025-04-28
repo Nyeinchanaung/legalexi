@@ -177,28 +177,28 @@
         </div>
         
         <h2>1. Position and Duties</h2>
-        <p>{{ full_data.position_and_duties | safe} }</p>
+        <p>{{ full_data.position_and_duties | replace('\n', '<br>') | safe} }</p>
         
         <h2>2. Compensation</h2>
-        <p>{{ full_data.compensation | safe }}</p>
+        <p>{{ full_data.compensation | replace('\n', '<br>') | safe }}</p>
 
         <h2>3. Term of Employment</h2>
-        <p>{{ full_data.term_of_employment| safe }}</p>
+        <p>{{ full_data.term_of_employment| replace('\n', '<br>') | safe }}</p>
 
         <h2>4. Confidentiality</h2>
-        <p>{{ full_data.confidentiality | safe }}</p>
+        <p>{{ full_data.confidentiality | replace('\n', '<br>') | safe }}</p>
 
         <h2>5. Termination</h2>
-        <p>{{ full_data.termination | safe }}</p>
+        <p>{{ full_data.termination | replace('\n', '<br>') | safe }}</p>
 
         <h2>6. Non-Compete</h2>
-        <p>{{ full_data.non_compete | safe }}</p>
+        <p>{{ full_data.non_compete | replace('\n', '<br>') | safe }}</p>
 
         <h2>7. Governing Law</h2>
-        <p>{{ full_data.governing_law| safe }}</p>
+        <p>{{ full_data.governing_law| replace('\n', '<br>') | safe }}</p>
 
         <h2>8. Benefits</h2>
-        <p>{{ full_data.benefits| safe }}</p>
+        <p>{{ full_data.benefits| replace('\n', '<br>') | safe }}</p>
         
         <div class="signature-block">
             <div class="signature" style="width: 45%; float: left;">
