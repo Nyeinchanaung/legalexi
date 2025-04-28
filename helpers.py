@@ -368,24 +368,6 @@ def build_clause_prompt_template(fields, clause_type, agreement_type):
         raise ValueError(f"Missing required field: {e}")
 
     # Build the prompt
-    # prompt = (
-    #     f"### Example Clause:\n"
-    #     f"{example_text}\n\n"
-    #     f"### Instruction:\n"
-    #     f"You are drafting a {clause_type.replace('_', ' ')} clause for a {agreement_type}.\n"
-    #     f"- Write in formal legal English.\n"
-    #     f"- Do NOT include any headings or titles.\n"
-    #     f"- Bullet point with correct number if necessary for clarity (e.g., for lists of obligations or services).\n"
-    #     f"- END the clause formally and completely.\n"
-    #     f"- DO NOT add address or location.\n"
-    #     f"- Avoid redundancy and repetition.\n"
-    #     f"- Incorporate the following details where applicable:\n"
-    #     f"  - Parties: {fields.get('party1', '')} and {fields.get('party2', '')}\n"
-    #     f"  - Effective Date: {fields.get('effective_date', fields.get('start_date', ''))}\n"
-    #     f"  - Duration/Period: {fields.get('confidentiality_period', fields.get('end_date', ''))}\n"
-    #     f"Now, write the full legal clause paragraph accordingly.\n\n"
-    #     f"### Response:\n"
-    # )
     prompt = (
         f"### Example Clause:\n"
         f"{example_text}\n\n"
@@ -393,12 +375,30 @@ def build_clause_prompt_template(fields, clause_type, agreement_type):
         f"You are drafting a {clause_type.replace('_', ' ')} clause for a {agreement_type}.\n"
         f"- Write in formal legal English.\n"
         f"- Do NOT include any headings or titles.\n"
-        f"- END the clause completely.\n"
+        f"- Bullet point with correct number if necessary for clarity (e.g., for lists of obligations or services).\n"
+        f"- END the clause formally and completely.\n"
         f"- DO NOT add address or location.\n"
         f"- Avoid redundancy and repetition.\n"
-        f"Now, write the full legal clause sentence by setence accordingly.\n\n"
+        f"- Incorporate the following details where applicable:\n"
+        f"  - Parties: {fields.get('party1', '')} and {fields.get('party2', '')}\n"
+        f"  - Effective Date: {fields.get('effective_date', fields.get('start_date', ''))}\n"
+        f"  - Duration/Period: {fields.get('confidentiality_period', fields.get('end_date', ''))}\n"
+        f"Now, write the full legal clause paragraph accordingly.\n\n"
         f"### Response:\n"
     )
+    # prompt = (
+    #     f"### Example Clause:\n"
+    #     f"{example_text}\n\n"
+    #     f"### Instruction:\n"
+    #     f"You are drafting a {clause_type.replace('_', ' ')} clause for a {agreement_type}.\n"
+    #     f"- Write in formal legal English.\n"
+    #     f"- Do NOT include any headings or titles.\n"
+    #     f"- END the clause completely.\n"
+    #     f"- DO NOT add address or location.\n"
+    #     f"- Avoid redundancy and repetition.\n"
+    #     f"Now, write the full legal clause sentence by setence accordingly.\n\n"
+    #     f"### Response:\n"
+    # )
 
     print("Example Text:\n", example_text, "\nPrompt:\n", prompt)
     return prompt
