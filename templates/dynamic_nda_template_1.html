@@ -158,110 +158,115 @@
         }
     </style>
 </head>
+<div class="contract-container">
+
 <!-- Contract Header -->
-<h1>{{ contract_type | upper }} CONTRACT</h1>
-<!-- Introductory Paragraph -->
-    <p>This Non-Disclosure Agreement (hereinafter referred to as the "Agreement") is entered into as of <strong>{{ full_data.effective_date }}</strong> (the "Effective Date") by and between <strong>{{ full_data.disclosing_party }}</strong> (the "Disclosing Party") and <strong>{{ full_data.receiving_party }}</strong> (the "Receiving Party"), collectively referred to as the "Parties."</p>
-    <!-- 1. Purpose Clause -->
-    <div class="editable-section">
-        <h3>1. Purpose</h3>
-        <div class="clause-text">
-            {{ full_data.purpose }}
-        </div>
+    <div class="contract-header">
+        <h1>NON-DISCLOSURE AGREEMENT CONTRACT</h1>
     </div>
+    <!-- Introductory Paragraph -->
+        <p>This Non-Disclosure Agreement (hereinafter referred to as the "Agreement") is entered into as of <strong>{{ full_data.effective_date }}</strong> (the "Effective Date") by and between <strong>{{ full_data.disclosing_party }}</strong> (the "Disclosing Party") and <strong>{{ full_data.receiving_party }}</strong> (the "Receiving Party"), collectively referred to as the "Parties."</p>
+        <!-- 1. Purpose Clause -->
+        <div class="editable-section">
+            <h3>1. Purpose</h3>
+            <div class="clause-text">
+                {{ full_data.purpose | replace('\n', '<br>') | safe}}
+            </div>
+        </div>
 
-    <!-- 2. Confidential Information Clause -->
-    <div class="editable-section">
-        <h3>2. Definition of Confidential Information</h3>
-        <div class="clause-text">
-            {{ full_data.confidential_information }}
+        <!-- 2. Confidential Information Clause -->
+        <div class="editable-section">
+            <h3>2. Definition of Confidential Information</h3>
+            <div class="clause-text">
+                {{ full_data.confidential_information | replace('\n', '<br>') | safe }}
+            </div>
         </div>
-    </div>
 
-    <!-- 3. Obligations Clause -->
-    <div class="editable-section">
-        <h3>3. Obligations of Receiving Party</h3>
-        <div class="clause-text">
-            {{ full_data.obligations }}
+        <!-- 3. Obligations Clause -->
+        <div class="editable-section">
+            <h3>3. Obligations of Receiving Party</h3>
+            <div class="clause-text">
+                {{ full_data.obligations| replace('\n', '<br>') | safe }}
+            </div>
         </div>
-    </div>
 
-    <!-- 4. Term Clause -->
-    <div class="editable-section">
-        <h3>4. Term</h3>
-        <div class="clause-text">
-            {{ full_data.term }}
+        <!-- 4. Term Clause -->
+        <div class="editable-section">
+            <h3>4. Term</h3>
+            <div class="clause-text">
+                {{ full_data.term | replace('\n', '<br>') | safe}}
+            </div>
         </div>
-    </div>
 
-    <!-- 5. Termination Clause -->
-    <div class="editable-section">
-        <h3>5. Termination</h3>
-        <div class="clause-text">
-            {{ full_data.termination }}
+        <!-- 5. Termination Clause -->
+        <div class="editable-section">
+            <h3>5. Termination</h3>
+            <div class="clause-text">
+                {{ full_data.termination | replace('\n', '<br>') | safe }}
+            </div>
         </div>
-    </div>
 
-    <!-- 6. Non-Compete Clause -->
-    {% if full_data.non_compete %}
-    <div class="editable-section">
-        <h3>6. Non-Compete</h3>
-        <div class="clause-text">
-            {{ full_data.non_compete }}
-        </div>
-    </div>
-    {% endif %}
-
-    <!-- 7. Governing Law Clause -->
-    <div class="editable-section">
-        <h3>7. Governing Law</h3>
-        <div class="clause-text">
-            {{ full_data.governing_law }}
-        </div>
-    </div>
-
-    <!-- 8. Data Privacy Clause -->
-    <div class="editable-section">
-        <h3>8. Data Privacy</h3>
-        <div class="clause-text">
-            {{ full_data.data_privacy }}
-        </div>
-    </div>
-
-    <div class="signature-block">
-        <div class="signature">
-            <div class="signature-label">Disclosing Party:</div>
-            <div>{{ full_data.disclosing_party }}</div>
-            <div style="margin-top: 3rem;">Signature: ___________________________</div>
-            <div>Name: ___________________________</div>
-            <div>Title: ___________________________</div>
-            <div>Date: ___________________________</div>
-        </div>
-        
-        <div class="signature">
-            <div class="signature-label">Receiving Party:</div>
-            <div>{{ full_data.receiving_party }}</div>
-            <div style="margin-top: 3rem;">Signature: ___________________________</div>
-            <div>Name: ___________________________</div>
-            <div>Title: ___________________________</div>
-            <div>Date: ___________________________</div>
-        </div>
-    </div>
-
-    <!-- Download PDF Button -->
-        {% if download %}
-        <div style="text-align: center; margin-top: 2rem;">
-            <form method="POST" action="/download_pdf/1">
-                <input type="hidden" name="contract_id" value="dynamic_nda">
-                <input type="hidden" name="template_choice" value="1">
-                <input type="hidden" name="full_data" value="{{ original_data_json }}">
-                <input type="hidden" name="original_data_json" value="{{ original_data_json }}">
-                <button type="submit" class="download-button">Download as PDF</button>
-            </form>
-        </div>
-        <div class="footer">
-            <p>Generated by AI Contract Generator on {{ generation_date }}. Not legal advice.</p>
+        <!-- 6. Non-Compete Clause -->
+        {% if full_data.non_compete %}
+        <div class="editable-section">
+            <h3>6. Non-Compete</h3>
+            <div class="clause-text">
+                {{ full_data.non_compete | replace('\n', '<br>') | safe}}
+            </div>
         </div>
         {% endif %}
+
+        <!-- 7. Governing Law Clause -->
+        <div class="editable-section">
+            <h3>7. Governing Law</h3>
+            <div class="clause-text">
+                {{ full_data.governing_law | replace('\n', '<br>') | safe}}
+            </div>
+        </div>
+
+        <!-- 8. Data Privacy Clause -->
+        <div class="editable-section">
+            <h3>8. Data Privacy</h3>
+            <div class="clause-text">
+                {{ full_data.data_privacy | replace('\n', '<br>') | safe}}
+            </div>
+        </div>
+
+        <div class="signature-block">
+            <div class="signature">
+                <div class="signature-label">Disclosing Party:</div>
+                <div>{{ full_data.disclosing_party }}</div>
+                <div style="margin-top: 3rem;">Signature: ___________________________</div>
+                <div>Name: ___________________________</div>
+                <div>Title: ___________________________</div>
+                <div>Date: ___________________________</div>
+            </div>
+            
+            <div class="signature">
+                <div class="signature-label">Receiving Party:</div>
+                <div>{{ full_data.receiving_party }}</div>
+                <div style="margin-top: 3rem;">Signature: ___________________________</div>
+                <div>Name: ___________________________</div>
+                <div>Title: ___________________________</div>
+                <div>Date: ___________________________</div>
+            </div>
+        </div>
+
+        <!-- Download PDF Button -->
+            {% if download %}
+            <div style="text-align: center; margin-top: 2rem;">
+                <form method="POST" action="/download_pdf/1">
+                    <input type="hidden" name="contract_id" value="dynamic_nda">
+                    <input type="hidden" name="template_choice" value="1">
+                    <input type="hidden" name="full_data" value="{{ original_data_json }}">
+                    <input type="hidden" name="original_data_json" value="{{ original_data_json }}">
+                    <button type="submit" class="download-button">Download as PDF</button>
+                </form>
+            </div>
+            <div class="footer">
+                <p>Generated by AI Contract Generator on {{ generation_date }}. Not legal advice.</p>
+            </div>
+            {% endif %}
+</div>
 </body>
 </html>

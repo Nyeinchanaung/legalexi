@@ -161,16 +161,10 @@
     </style>
 </head>
 <!-- Contract Header -->
-<h1>{{ contract_type | upper }} CONTRACT</h1>
-
+<h1>{{ full_data.contract_type | upper }} CONTRACT</h1>
 <!-- Introductory Paragraph -->
-{% if contract_type == "Non-Disclosure Agreement (NDA)" %}
     <p>This Non-Disclosure Agreement (hereinafter referred to as the "Agreement") is entered into as of <strong>{{ full_data.effective_date }}</strong> (the "Effective Date") by and between <strong>{{ full_data.disclosing_party }}</strong> (the "Disclosing Party") and <strong>{{ full_data.receiving_party }}</strong> (the "Receiving Party"), collectively referred to as the "Parties."</p>
-{% endif %}
-
 <!-- Recitals -->
-<h1>{{ contract_type | upper }} CONTRACT</h1>
-    <p>This Agreement is effective as of <strong>{{ full_data.effective_date }}</strong> between <strong>{{ full_data.party1 }}</strong> and <strong>{{ full_data.party2 }}</strong>.</p>
 
     <!-- 1. Purpose Clause -->
     <div class="editable-section">

@@ -4,6 +4,7 @@ from spacy.matcher import Matcher
 from transformers import AutoTokenizer, AutoModelForCausalLM, pipeline, GPT2Tokenizer, GPT2LMHeadModel
 import torch
 from peft import PeftModel
+import re
 
 nlp = spacy.load("en_core_web_sm")
 # Path to the merged model (adjust for DigitalOcean deployment if needed)
@@ -392,7 +393,6 @@ def build_clause_prompt_template(fields, clause_type, agreement_type):
         f"You are drafting a {clause_type.replace('_', ' ')} clause for a {agreement_type}.\n"
         f"- Write in formal legal English.\n"
         f"- Do NOT include any headings or titles.\n"
-        f"- Bullet point for each line.\n"
         f"- END the clause completely.\n"
         f"- DO NOT add address or location.\n"
         f"- Avoid redundancy and repetition.\n"
@@ -414,10 +414,10 @@ def generate_legal_clause(fields, clause_type, agreement_type):
     # Generate output based on input
         outputs = model.generate(
             **inputs,                           # input_ids and attention_mask from the tokenizer
-            max_new_tokens=300,                 # limit the number of tokens generated
+            max_new_tokens=256,                 # limit the number of tokens generated
             num_beams=4,                        # use beam search for better quality
             do_sample=True,                     # enable sampling (for more diverse outputs)
-            temperature=0.7,                    # adjust temperature for creativity (lower = more deterministic)
+            temperature=0.5,                    # adjust temperature for creativity (lower = more deterministic)
             top_p=0.9,                          # nucleus sampling (keep top 90% probability mass)
             eos_token_id=tokenizer.eos_token_id, # end-of-sequence token to stop generation
             pad_token_id=tokenizer.pad_token_id, # padding token for correct handling
@@ -433,17 +433,70 @@ def generate_legal_clause(fields, clause_type, agreement_type):
     # Remove any headings or titles from the generated text
     generated_text = "\n".join(line for line in generated_text.split("\n") if not (line.isupper() or line.endswith(":"))).strip()
     print("Generated Text:\n", generated_text)
-    generated_text = remove_last_sentence(generated_text)
+    generated_text = clean_text(generated_text)
+    print("Cleaned Text:\n", generated_text)
     return generated_text
 
 
-def remove_last_sentence(text):
-    sentences = text.split('.')
-    if len(sentences) <= 1:
-        return ""
+def clean_text(text):
+    # # Process the text using spaCy
+    # doc = nlp(text)
+
+    # # Split the text into sentences
+    # sentences = list(doc.sents)
     
-    last_sentence = sentences.pop()
-    if last_sentence.strip():
-        return ".".join(sentences) + "."
-    else:
-        return ".".join(sentences)
+    # # Remove empty numbered sentences (e.g., "2." with no content after it)
+    # sentences = [sent for sent in sentences if not (sent.text.strip().isdigit() or (sent.text.strip()[0].isdigit() and len(sent.text.strip()) <= 3))]
+
+    # # Rebuild the text with bullet points and numbered sentences
+    # cleaned_text = "<ul>"
+
+    # for sent in sentences:
+    #     sentence_text = sent.text.strip()
+
+    #     # Check if the sentence ends with a colon (e.g., "Job Title and Responsibilities:")
+    #     if sentence_text.endswith(":"):
+    #         # Make the part before the colon bold
+    #         part_before_colon = sentence_text.split(":", 1)[0]
+    #         part_after_colon = sentence_text.split(":", 1)[1].strip()
+    #         cleaned_text += f"<li><strong>{part_before_colon}:</strong> {part_after_colon}</li>"
+    #     elif sentence_text and sentence_text[0].isdigit() and sentence_text[1] == ".":
+    #         # For numbered sentences, retain the number and add it as part of the list item
+    #         cleaned_text += f"<li>{sentence_text}</li>"
+    #     else:
+    #         # For unnumbered sentences, add a bullet point
+    #         cleaned_text += f"<li>{sentence_text}</li>"
+
+    # cleaned_text += "</ul>"
+    
+    # return cleaned_text
+    
+    # Normalize input text
+    # Load spaCy English model
+    nlp = spacy.load("en_core_web_sm")
+    
+    # Process the text with spaCy
+    doc = nlp(text)
+    
+    # Get all sentences
+    sentences = list(doc.sents)
+    
+    # If no sentences or only one sentence, return original text
+    if len(sentences) <= 1:
+        return text.strip()
+    
+    # Get the last sentence
+    last_sentence = sentences[-1]
+    
+    # Check if the last sentence is incomplete
+    # An incomplete sentence might lack a verb or end abruptly
+    has_verb = any(token.pos_ == "VERB" for token in last_sentence)
+    ends_with_punctuation = last_sentence.text.strip()[-1] in ".!?"
+    
+    # If the last sentence has no verb or doesn't end with punctuation, remove it
+    if not has_verb or not ends_with_punctuation:
+        # Reconstruct the text without the last sentence
+        return text[:last_sentence.start_char].strip()
+    
+    # If the last sentence is complete, return the original text
+    return text.strip()

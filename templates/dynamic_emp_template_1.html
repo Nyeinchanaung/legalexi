@@ -162,7 +162,7 @@
     <div class="contract-container">
         <div class="contract-header">
             <h1>EMPLOYMENT CONTRACT</h1>
-            <p class="effective-date">Effective as of {{ full_data.start_date }}</p>
+            <p class="effective-date">Effective as of {{ full_data.start_date  }}</p>
         </div>
         
         <div class="parties">
@@ -177,28 +177,28 @@
         </div>
         
         <h2>1. Position and Duties</h2>
-        <p>{{ full_data.position_and_duties }}</p>
+        <p>{{ full_data.position_and_duties | safe} }</p>
         
         <h2>2. Compensation</h2>
-        <p>{{ full_data.compensation }}</p>
+        <p>{{ full_data.compensation | safe }}</p>
 
         <h2>3. Term of Employment</h2>
-        <p>{{ full_data.term_of_employment }}</p>
+        <p>{{ full_data.term_of_employment| safe }}</p>
 
         <h2>4. Confidentiality</h2>
-        <p>{{ full_data.confidentiality }}</p>
+        <p>{{ full_data.confidentiality | safe }}</p>
 
         <h2>5. Termination</h2>
-        <p>{{ full_data.termination }}</p>
+        <p>{{ full_data.termination | safe }}</p>
 
         <h2>6. Non-Compete</h2>
-        <p>{{ full_data.non_compete }}</p>
+        <p>{{ full_data.non_compete | safe }}</p>
 
         <h2>7. Governing Law</h2>
-        <p>{{ full_data.governing_law }}</p>
+        <p>{{ full_data.governing_law| safe }}</p>
 
         <h2>8. Benefits</h2>
-        <p>{{ full_data.benefits }}</p>
+        <p>{{ full_data.benefits| safe }}</p>
         
         <div class="signature-block">
             <div class="signature" style="width: 45%; float: left;">
